@@ -1,0 +1,22 @@
+node_modules
+coverage
+coverage.json
+typechain
+typechain-types
+**/.DS_Store
+contracts-and-usdc-tests/@types/generated/**
+@types/**
+todo
+out
+
+.vscode/settings.json
+
+cache_hardhat/**
+
+lib/**
+out/**
+
+# Hardhat files
+cache
+artifacts
+
