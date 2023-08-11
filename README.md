@@ -69,8 +69,8 @@ or equal to the `amount`. The abillity to burn tokens is restricted to the `BRID
 
 ### Blacklisting
 
-Addresses can be blacklisted. A blacklisted address will be unable to transfer
-tokens, approve, mint, or burn tokens.
+Addresses can be blacklisted. A blacklisted address will be unable to participate in the approval, 
+increase or decrease of allowances and will be unable to transfer, mint, or burn tokens.
 
 #### Adding a blacklisted address
 
