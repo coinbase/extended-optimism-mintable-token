@@ -58,12 +58,11 @@ contract Common_Test is Test {
         ExtendedOptimismMintableTokenProxy = new Proxy(admin);
 
         bytes memory initializeCall = abi.encodeCall(
-            ExtendedOptimismMintableToken.initialize, 
+            ExtendedOptimismMintableToken.initializeV2, 
             (
                 string(abi.encodePacked("L2-", L1Token.name())),
                 string(abi.encodePacked("L2-", L1Token.symbol())),
-                owner,
-                1
+                owner
             )
         );
 
@@ -88,4 +87,3 @@ contract Common_Test is Test {
         return Strings.toHexString(uint256(r), 32);
     }
 }
-

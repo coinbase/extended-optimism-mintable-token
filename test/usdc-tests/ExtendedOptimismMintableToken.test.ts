@@ -20,7 +20,7 @@ contract("ExtendedOptimismMintableToken",  (accounts) => {
 
     beforeEach(async () => {
         let initializeCall = web3.eth.abi.encodeFunctionCall({
-            name: "initialize",
+            name: "initializeV2",
             type: "function",
             inputs: [{
                 type: "string",
@@ -33,12 +33,8 @@ contract("ExtendedOptimismMintableToken",  (accounts) => {
             {
                 type: "address",
                 name: "_owner"
-            },
-            {
-                type: "uint8",
-                name: "_version"
             }]
-        }, ["USD Coin", "USDC.o", roleOwnerBlacklisterPauser, 1]);
+        }, ["USD Coin", "USDC.o", roleOwnerBlacklisterPauser]);
 
         extendedOptimismMintableTokenImpl = await ExtendedOptimismMintableToken.new(
             bridgeAddress,
@@ -72,7 +68,7 @@ contract("ExtendedOptimismMintableToken",  (accounts) => {
 
         domainSeparator = makeDomainSeparator(
             "USD Coin",
-            "1",
+            "2",
             31337, // hardhat chain id
             extendedOptimismMintableToken.address
         );
