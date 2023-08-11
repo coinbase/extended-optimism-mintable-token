@@ -13,7 +13,6 @@ import { ILegacyMintableERC20, IOptimismMintableERC20 } from "@eth-optimism-bedr
 import { AddressAliasHelper } from "@eth-optimism-bedrock/contracts/vendor/AddressAliasHelper.sol";
 import { Encoding } from "@eth-optimism-bedrock/contracts/libraries/Encoding.sol";
 import { Proxy } from "@eth-optimism-bedrock/contracts/universal/Proxy.sol";
-import { UpgradeableOptimismMintableERC20Fake } from "test/fakes/UpgradeableOptimismMintableERC20Fake.sol";
 import { UpgradeableOptimismMintableERC20 } from "src/UpgradeableOptimismMintableERC20.sol";
 
 contract UpgradeableOptimismMintableERC20_Test is Test {
@@ -36,8 +35,8 @@ contract UpgradeableOptimismMintableERC20_Test is Test {
     address bob = address(256);
     L2StandardBridge l2Bridge;
     ERC20 l1Token;
-    UpgradeableOptimismMintableERC20Fake l2TokenImpl;
-    UpgradeableOptimismMintableERC20Fake l2Token;
+    UpgradeableOptimismMintableERC20 l2TokenImpl;
+    UpgradeableOptimismMintableERC20 l2Token;
     Proxy proxy;
     string name;
     string symbol;
@@ -50,7 +49,7 @@ contract UpgradeableOptimismMintableERC20_Test is Test {
         l1Token = new ERC20("Native L1 Token", "L1T");
         name = string(abi.encodePacked("L2-", l1Token.name()));
         symbol = string(abi.encodePacked("L2-", l1Token.symbol()));
-        l2TokenImpl = new UpgradeableOptimismMintableERC20Fake(
+        l2TokenImpl = new UpgradeableOptimismMintableERC20(
             address(l2Bridge),
             address(l1Token),
             DECIMALS
@@ -59,14 +58,14 @@ contract UpgradeableOptimismMintableERC20_Test is Test {
         proxy = new Proxy(admin);
 
         initializeCall = abi.encodeCall(
-            UpgradeableOptimismMintableERC20Fake.initialize, 
+            UpgradeableOptimismMintableERC20.initialize, 
             (name, symbol)
         );
 
         vm.prank(admin);
         proxy.upgradeToAndCall(address(l2TokenImpl), initializeCall);
 
-        l2Token = UpgradeableOptimismMintableERC20Fake(address(proxy));
+        l2Token = UpgradeableOptimismMintableERC20(address(proxy));
     }
 
     function test_bridgeDeposit_success(uint256 _transferAmount) external {
