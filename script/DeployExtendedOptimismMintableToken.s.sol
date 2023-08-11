@@ -60,11 +60,10 @@ contract DeployExtendedOptimismMintableToken is Script {
         console.log("extendedOptimismMintableToken proxy deployed to %s", address(extendedOptimismMintableTokenProxy));
 
         bytes memory initializeCall = abi.encodeWithSelector(
-            extendedOptimismMintableTokenImpl.initialize.selector,
+            extendedOptimismMintableTokenImpl.initializeV2.selector,
             name,
             symbol,
-            owner,
-            1
+            owner
         );
         
         extendedOptimismMintableTokenProxy.upgradeToAndCall(address(extendedOptimismMintableTokenImpl), initializeCall);
