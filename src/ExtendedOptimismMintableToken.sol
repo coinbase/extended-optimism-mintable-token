@@ -299,6 +299,7 @@ contract ExtendedOptimismMintableToken is Semver, UpgradeableOptimismMintableERC
      *  
      * Additionally, requires that:
      * - contract is not paused
+     * - `_msgSender()` cannot be blacklisted
      * - `from` cannot be blacklisted
      * - `to` cannot be blacklisted
      */
@@ -307,6 +308,7 @@ contract ExtendedOptimismMintableToken is Semver, UpgradeableOptimismMintableERC
         virtual
         override
         whenNotPaused
+        notBlacklisted(_msgSender())
         notBlacklisted(from)
         notBlacklisted(to)
         returns (bool)

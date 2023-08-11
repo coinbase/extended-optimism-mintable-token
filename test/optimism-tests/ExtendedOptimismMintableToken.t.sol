@@ -188,7 +188,7 @@ contract ExtendedOptimismMintableToken_Test is Common_Test {
         L2Token.transfer(owner, 100);
     }
 
-    function test_transferFromWhenBlacklisted_reverts() external {
+    function test_transferFromWhenFromBlacklisted_reverts() external {
         vm.prank(blacklister);
         L2Token.blacklist(alice);
         assertEq(L2Token.isBlacklisted(alice), true);
@@ -196,6 +196,26 @@ contract ExtendedOptimismMintableToken_Test is Common_Test {
         vm.expectRevert("Blacklistable: account is blacklisted");
         vm.prank(address(L2Bridge));
         L2Token.transferFrom(alice, owner, 100);
+    }
+
+    function test_transferFromWhenToBlacklisted_reverts() external {
+        vm.prank(blacklister);
+        L2Token.blacklist(alice);
+        assertEq(L2Token.isBlacklisted(alice), true);
+        
+        vm.expectRevert("Blacklistable: account is blacklisted");
+        vm.prank(address(L2Bridge));
+        L2Token.transferFrom(owner, alice, 100);
+    }
+
+    function test_transferFromWhenMsgSenderBlacklisted_reverts() external {
+        vm.prank(blacklister);
+        L2Token.blacklist(alice);
+        assertEq(L2Token.isBlacklisted(alice), true);
+        
+        vm.expectRevert("Blacklistable: account is blacklisted");
+        vm.prank(alice);
+        L2Token.transferFrom(owner, pauser, 100);
     }
 
     function test_approveWhenBlacklistedSpender_reverts() external {
@@ -225,4 +245,3 @@ contract ExtendedOptimismMintableToken_Test is Common_Test {
         L2Token.renounceRole(DEFAULT_ADMIN_ROLE, owner);
     }
 }
-
