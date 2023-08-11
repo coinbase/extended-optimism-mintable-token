@@ -66,10 +66,10 @@ contract UpgradeableOptimismMintableERC20 is IOptimismMintableERC20, ILegacyMint
     /// @notice Initializes the UpgradeableOptimismMintableERC20 contract.
     /// @param _name   ERC20 name.
     /// @param _symbol ERC20 symbol.
-    function __UpgradeableOptimismMintableERC20__init(
+    function initialize(
         string memory _name,
         string memory _symbol
-    ) internal virtual onlyInitializing() {
+    ) external virtual initializer {
         ERC20Upgradeable.__ERC20_init(_name, _symbol);
     }
 

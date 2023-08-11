@@ -9,7 +9,7 @@ The `ExtendedOptimismMintableToken` inherits from the `UpgradeableOptimismMintab
  * OpenZeppelin's [`IERC165Upgradeable`](https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable/blob/v4.7.3/contracts/utils/introspection/IERC165Upgradeable.sol) contract is used in place of their [`IERC165`](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.7.3/contracts/utils/introspection/IERC165.sol) contract to support upgradeability.
  * `supportsInterface` is marked as `public virtual` to allow inheriting contracts to both override and call it.
  * Marks `mint` and `burn` as `public` instead of `external` to allow inheriting contracts to call them.
-* An `__UpgradeableOptimismMintableERC20__initialize` initializer function was added to support the initialization of `ERC20Upgradeable` configuration.
+* An `initialize` initializer function was added to support the initialization of `ERC20Upgradeable` configuration.
 * A `decimals` variable was added to the constructor.
 * A storage gap was added to simplify state management in the event that state variables are added to `UpgradeableOptimismMintableERC20` in the future.
 
@@ -136,6 +136,7 @@ logic of any deployed tokens seamlessly.
 - Coinbase will upgrade the token via a call to `upgradeTo` or `upgradeToAndCall`
   if initialization is required for the new version.
 - Only the `admin` role may call `upgradeTo` or `upgradeToAndCall`.
+- For upgrades, if an initializer method is used, set a constant version in the `reinitializer` modifier that is incremented from the previous upgrade's version. This prevents the initializer method from being called multiple times. Failing to follow this guidance could introduce vulnerabilities. Additionally, note subsequently introduced `reinitializer` methods are not meant to re-execute the same initialization code used in previous versions.
 
 ### Reassigning Roles
 

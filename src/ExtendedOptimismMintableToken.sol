@@ -45,19 +45,15 @@ contract ExtendedOptimismMintableToken is Semver, UpgradeableOptimismMintableERC
      * @param _name         ERC20 name.
      * @param _symbol       ERC20 symbol.
      * @param _owner        Address designated for the owner role.
-     * @param _version      Version for initialization
      */
-    function initialize(
+    function initializeV2(
         string memory _name,
         string memory _symbol,
-        address _owner,
-        uint8 _version
-    ) external virtual reinitializer(_version) {
-        UpgradeableOptimismMintableERC20.__UpgradeableOptimismMintableERC20__init(
-            _name, _symbol
-        );
-        EIP712Upgradeable.__EIP712_init(_name, "1");
+        address _owner
+    ) external virtual reinitializer(2) {
+        ERC20Upgradeable.__ERC20_init(_name, _symbol);
         ERC20PermitUpgradeable.__ERC20Permit_init(_name);
+        EIP712Upgradeable.__EIP712_init(_name, "2");
         __AccessControl_init();
         _grantRole(DEFAULT_ADMIN_ROLE, _owner);
         __Pausable_init();
