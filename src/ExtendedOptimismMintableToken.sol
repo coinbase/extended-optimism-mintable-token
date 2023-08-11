@@ -224,6 +224,7 @@ contract ExtendedOptimismMintableToken is Semver, UpgradeableOptimismMintableERC
      * Additionally, requires that:
      * - contract is not paused
      * - `_msgSender()` cannot be blacklisted
+     * - `spender` cannot be blacklisted
      */
     function increaseAllowance(address spender, uint256 addedValue)
         public
@@ -231,6 +232,7 @@ contract ExtendedOptimismMintableToken is Semver, UpgradeableOptimismMintableERC
         override
         whenNotPaused
         notBlacklisted(_msgSender())
+        notBlacklisted(spender)
         returns (bool)
     {
         return ERC20Upgradeable.increaseAllowance(spender, addedValue);
@@ -242,6 +244,7 @@ contract ExtendedOptimismMintableToken is Semver, UpgradeableOptimismMintableERC
      * Additionally, requires that:
      * - contract is not paused
      * - `_msgSender()` cannot be blacklisted
+     * - `spender` cannot be blacklisted
      */
     function decreaseAllowance(address spender, uint256 subtractedValue)
         public
@@ -249,6 +252,7 @@ contract ExtendedOptimismMintableToken is Semver, UpgradeableOptimismMintableERC
         override
         whenNotPaused 
         notBlacklisted(_msgSender())
+        notBlacklisted(spender)
         returns (bool)
     {
         return ERC20Upgradeable.decreaseAllowance(spender, subtractedValue);
