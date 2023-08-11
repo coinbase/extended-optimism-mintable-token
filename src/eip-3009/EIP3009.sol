@@ -56,6 +56,11 @@ abstract contract EIP3009 is IERC20Internal, IEIP3009, EIP712Upgradeable {
      */
     mapping(address => mapping(bytes32 => bool)) private _authorizationStates;
 
+    /**
+     * @notice Emitted when an authorization is canceled
+     * @param authorizer    Authorizer's address
+     * @param nonce         Nonce of the authorization
+     */
     event AuthorizationCanceled(
         address indexed authorizer,
         bytes32 indexed nonce
@@ -170,6 +175,7 @@ abstract contract EIP3009 is IERC20Internal, IEIP3009, EIP712Upgradeable {
 
     /**
      * @notice Attempt to cancel an authorization
+     * @dev Emits an {AuthorizationCanceled} event.
      * @param authorizer    Authorizer's address
      * @param nonce         Nonce of the authorization
      * @param v             v of the signature
@@ -238,6 +244,7 @@ abstract contract EIP3009 is IERC20Internal, IEIP3009, EIP712Upgradeable {
 
     /**
      * @notice Mark an authorization as used
+     * @dev Emits an {AuthorizationUsed} event.
      * @param authorizer    Authorizer's address
      * @param nonce         Nonce of the authorization
      */

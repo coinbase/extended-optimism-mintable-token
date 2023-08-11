@@ -28,6 +28,7 @@ contract ExtendedOptimismMintableToken is Semver, UpgradeableOptimismMintableERC
      * @notice Constructor method 
      * @param _bridge      Address of the L2 standard bridge.
      * @param _remoteToken Address of the corresponding L1 token.
+     * @param _decimals    Number of decimals for user representation for display purposes. 
      */
     constructor(
         address _bridge,
@@ -222,6 +223,7 @@ contract ExtendedOptimismMintableToken is Semver, UpgradeableOptimismMintableERC
      *  
      * Additionally, requires that:
      * - contract is not paused
+     * - `_msgSender()` cannot be blacklisted
      */
     function increaseAllowance(address spender, uint256 addedValue)
         public
@@ -239,6 +241,7 @@ contract ExtendedOptimismMintableToken is Semver, UpgradeableOptimismMintableERC
      *  
      * Additionally, requires that:
      * - contract is not paused
+     * - `_msgSender()` cannot be blacklisted
      */
     function decreaseAllowance(address spender, uint256 subtractedValue)
         public
@@ -316,13 +319,13 @@ contract ExtendedOptimismMintableToken is Semver, UpgradeableOptimismMintableERC
      * @param _to     Address to mint tokens to.
      * @param _amount Amount of tokens to mint.
      * 
-     *  Emits a {Mint} event.
+     * Emits a {Mint} event.
      * 
-     *  Requirements:
+     * Requirements:
      * 
-     *  - contract is not paused
-     *  - `_msgSender()` cannot be blacklisted
-     *  - `to` cannot be blacklisted
+     * - contract is not paused
+     * - `_msgSender()` cannot be blacklisted
+     * - `to` cannot be blacklisted
      * - Only callable by the `BRIDGE` address
      */
     function mint(address _to, uint256 _amount)
@@ -346,8 +349,8 @@ contract ExtendedOptimismMintableToken is Semver, UpgradeableOptimismMintableERC
      * Requirements:
      * 
      * - contract is not paused
+     * - `_msgSender()` cannot be blacklisted
      * - `from` cannot be blacklisted
-     * - `to` cannot be blacklisted
      * - Only callable by the `BRIDGE` address
      */
     function burn(address _from, uint256 _amount)

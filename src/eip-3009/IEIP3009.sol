@@ -4,8 +4,16 @@
 
 pragma solidity 0.8.15;
 
-interface IEIP3009 { 
-
+/**
+ * @title IEIP3009
+ * @notice Interface for EIP-3009 (https://eips.ethereum.org/EIPS/eip-3009)
+ */
+interface IEIP3009 {
+    /**
+     * @notice Emitted when an authorization is used
+     * @param authorizer    Authorizer's address
+     * @param nonce         Nonce of the authorization
+     */
     event AuthorizationUsed(
         address indexed authorizer,
         bytes32 indexed nonce
@@ -51,8 +59,7 @@ interface IEIP3009 {
     /**
      * @notice Receive a transfer with a signed authorization from the payer
      * @dev This has an additional check to ensure that the payee's address matches
-     * the caller of this function to prevent front-running attacks. (See security
-     * considerations)
+     * the caller of this function to prevent front-running attacks.
      * @param from          Payer's address (Authorizer)
      * @param to            Payee's address
      * @param value         Amount to be transferred

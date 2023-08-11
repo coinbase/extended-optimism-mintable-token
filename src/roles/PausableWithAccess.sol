@@ -9,14 +9,15 @@ import { PausableUpgradeable } from "@openzeppelin/contracts-upgradeable/securit
 
 /**
  * @dev Contract which implements an emergency stop mechanism that
- * can be triggered by an authorized account. Allows setting and
+ * can be triggered by an authorized account, the pauser. Allows setting and
  * updating this role through role-based access control logic.
  */
 contract PausableWithAccess is AccessControlUpgradeable, PausableUpgradeable {
+    // Role identifier for the pauser
     bytes32 public constant PAUSER_ROLE = keccak256("roles.pauser");
 
     /**
-     * @dev called by the owner to unpause, returns to normal state
+     * @dev called by the pauser to unpause, returns to normal state
      *
      * May emit an {Unpaused} event.
      *
@@ -29,8 +30,7 @@ contract PausableWithAccess is AccessControlUpgradeable, PausableUpgradeable {
     }
 
     /**
-     * @dev called by the owner to pause
-     *
+     * @dev called by the pauser to pause
      *
      * May emit a {Paused} event.
      *
