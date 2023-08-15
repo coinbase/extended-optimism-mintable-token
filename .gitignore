@@ -8,6 +8,7 @@ contracts-and-usdc-tests/@types/generated/**
 @types/**
 todo
 out
+.env.local
 
 .vscode/settings.json
 

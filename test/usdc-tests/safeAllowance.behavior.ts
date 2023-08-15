@@ -78,6 +78,17 @@ export function hasSafeAllowance(
             "account is blacklisted"
             );
         });
+
+        it("reverts if the spender is blacklisted", async () => {
+            // owner is blacklisted
+            await fiatToken.blacklist(alice, { from: roleOwnerBlacklisterPauser });
+
+            // try to increase allowance
+            await expectRevert(
+            fiatToken.increaseAllowance(alice, 1, { from: bob }),
+            "account is blacklisted"
+            );
+        });
     });
 
     describe("decreaseAllowance", () => {
@@ -145,6 +156,17 @@ export function hasSafeAllowance(
         // try to decrease allowance
         await expectRevert(
           fiatToken.decreaseAllowance(bob, 1, { from: alice }),
+          "account is blacklisted"
+        );
+      });
+
+      it("reverts if the spender is blacklisted", async () => {
+        // owner is blacklisted
+        await fiatToken.blacklist(alice, { from: roleOwnerBlacklisterPauser });
+
+        // try to decrease allowance
+        await expectRevert(
+          fiatToken.decreaseAllowance(alice, 1, { from: bob }),
           "account is blacklisted"
         );
       });

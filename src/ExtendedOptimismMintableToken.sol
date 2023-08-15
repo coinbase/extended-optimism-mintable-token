@@ -28,6 +28,7 @@ contract ExtendedOptimismMintableToken is Semver, UpgradeableOptimismMintableERC
      * @notice Constructor method 
      * @param _bridge      Address of the L2 standard bridge.
      * @param _remoteToken Address of the corresponding L1 token.
+     * @param _decimals    Number of decimals for user representation for display purposes. 
      */
     constructor(
         address _bridge,
@@ -45,19 +46,14 @@ contract ExtendedOptimismMintableToken is Semver, UpgradeableOptimismMintableERC
      * @param _name         ERC20 name.
      * @param _symbol       ERC20 symbol.
      * @param _owner        Address designated for the owner role.
-     * @param _version      Version for initialization
      */
-    function initialize(
+    function initializeV2(
         string memory _name,
         string memory _symbol,
-        address _owner,
-        uint8 _version
-    ) external virtual reinitializer(_version) {
-        UpgradeableOptimismMintableERC20.__UpgradeableOptimismMintableERC20__init(
-            _name, _symbol
-        );
+        address _owner
+    ) external virtual reinitializer(2) {
+        ERC20Upgradeable.__ERC20_init(_name, _symbol);
         EIP712Upgradeable.__EIP712_init(_name, "1");
-        ERC20PermitUpgradeable.__ERC20Permit_init(_name);
         __AccessControl_init();
         _grantRole(DEFAULT_ADMIN_ROLE, _owner);
         __Pausable_init();
@@ -222,6 +218,8 @@ contract ExtendedOptimismMintableToken is Semver, UpgradeableOptimismMintableERC
      *  
      * Additionally, requires that:
      * - contract is not paused
+     * - `_msgSender()` cannot be blacklisted
+     * - `spender` cannot be blacklisted
      */
     function increaseAllowance(address spender, uint256 addedValue)
         public
@@ -229,6 +227,7 @@ contract ExtendedOptimismMintableToken is Semver, UpgradeableOptimismMintableERC
         override
         whenNotPaused
         notBlacklisted(_msgSender())
+        notBlacklisted(spender)
         returns (bool)
     {
         return ERC20Upgradeable.increaseAllowance(spender, addedValue);
@@ -239,6 +238,8 @@ contract ExtendedOptimismMintableToken is Semver, UpgradeableOptimismMintableERC
      *  
      * Additionally, requires that:
      * - contract is not paused
+     * - `_msgSender()` cannot be blacklisted
+     * - `spender` cannot be blacklisted
      */
     function decreaseAllowance(address spender, uint256 subtractedValue)
         public
@@ -246,6 +247,7 @@ contract ExtendedOptimismMintableToken is Semver, UpgradeableOptimismMintableERC
         override
         whenNotPaused 
         notBlacklisted(_msgSender())
+        notBlacklisted(spender)
         returns (bool)
     {
         return ERC20Upgradeable.decreaseAllowance(spender, subtractedValue);
@@ -296,6 +298,7 @@ contract ExtendedOptimismMintableToken is Semver, UpgradeableOptimismMintableERC
      *  
      * Additionally, requires that:
      * - contract is not paused
+     * - `_msgSender()` cannot be blacklisted
      * - `from` cannot be blacklisted
      * - `to` cannot be blacklisted
      */
@@ -304,6 +307,7 @@ contract ExtendedOptimismMintableToken is Semver, UpgradeableOptimismMintableERC
         virtual
         override
         whenNotPaused
+        notBlacklisted(_msgSender())
         notBlacklisted(from)
         notBlacklisted(to)
         returns (bool)
@@ -316,13 +320,13 @@ contract ExtendedOptimismMintableToken is Semver, UpgradeableOptimismMintableERC
      * @param _to     Address to mint tokens to.
      * @param _amount Amount of tokens to mint.
      * 
-     *  Emits a {Mint} event.
+     * Emits a {Mint} event.
      * 
-     *  Requirements:
+     * Requirements:
      * 
-     *  - contract is not paused
-     *  - `_msgSender()` cannot be blacklisted
-     *  - `to` cannot be blacklisted
+     * - contract is not paused
+     * - `_msgSender()` cannot be blacklisted
+     * - `to` cannot be blacklisted
      * - Only callable by the `BRIDGE` address
      */
     function mint(address _to, uint256 _amount)
@@ -346,8 +350,8 @@ contract ExtendedOptimismMintableToken is Semver, UpgradeableOptimismMintableERC
      * Requirements:
      * 
      * - contract is not paused
+     * - `_msgSender()` cannot be blacklisted
      * - `from` cannot be blacklisted
-     * - `to` cannot be blacklisted
      * - Only callable by the `BRIDGE` address
      */
     function burn(address _from, uint256 _amount)

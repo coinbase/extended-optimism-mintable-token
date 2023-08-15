@@ -3,13 +3,13 @@ This repository implements the [`ExtendedOptimismMintableToken.sol`](./src/Exten
 and is based on Optimism's [`OptimismMintableERC20`](https://github.com/ethereum-optimism/optimism/blob/0f07717bf06c2278bbccc9c62cad30731beeb322/packages/contracts-bedrock/contracts/universal/OptimismMintableERC20.sol) contract. It allows minting/burning of tokens by a specified bridge, pausing all activity, freezing of individual
 addresses ("blacklisting"), and a way to upgrade the contract so that bugs can be fixed or features added. It also supports gas abstraction functionality by implementing [EIP-3009](https://eips.ethereum.org/EIPS/eip-3009) and using OpenZeppelin's upgradeable [EIP-2612](https://eips.ethereum.org/EIPS/eip-2612) implementation. We describe this functionality further under [Functionality](#functionality). Finally, it uses OpenZeppelin's [AccessControl](https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable/blob/v4.7.3/contracts/access/AccessControlUpgradeable.sol) pattern to use role-based access control for the pausing and blacklisting capabilities, designating a role to manage each, along with an `owner` role to manage those roles (detailed further below).
 
-### UpgradeableOptimismMintableToken
-The `ExtendedOptimismMintableToken` inherits from the `UpgradeableOptimismMintableToken` contract, which itself is based off of Optimism's [OptimismMintableERC20](https://github.com/ethereum-optimism/optimism/blob/0f07717bf06c2278bbccc9c62cad30731beeb322/packages/contracts-bedrock/contracts/universal/OptimismMintableERC20.sol) contract. The `UpgradeableOptimismMintableToken` contains the following changes from Optimism's `OptimismMintableERC20`:
+### UpgradeableOptimismMintableERC20
+The `ExtendedOptimismMintableToken` inherits from the `UpgradeableOptimismMintableERC20` contract, which itself is based off of Optimism's [OptimismMintableERC20](https://github.com/ethereum-optimism/optimism/blob/0f07717bf06c2278bbccc9c62cad30731beeb322/packages/contracts-bedrock/contracts/universal/OptimismMintableERC20.sol) contract. The `UpgradeableOptimismMintableERC20` contains the following changes from Optimism's `OptimismMintableERC20`:
  * OpenZeppelin's [`ERC20Upgradeable`](https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable/blob/v4.7.3/contracts/token/ERC20/ERC20Upgradeable.sol) contract is used in place of their [`ERC20`](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.7.3/contracts/token/ERC20/ERC20.sol) contract to support upgradeability.
  * OpenZeppelin's [`IERC165Upgradeable`](https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable/blob/v4.7.3/contracts/utils/introspection/IERC165Upgradeable.sol) contract is used in place of their [`IERC165`](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.7.3/contracts/utils/introspection/IERC165.sol) contract to support upgradeability.
  * `supportsInterface` is marked as `public virtual` to allow inheriting contracts to both override and call it.
  * Marks `mint` and `burn` as `public` instead of `external` to allow inheriting contracts to call them.
-* An `__UpgradeableOptimismMintableERC20__initialize` initializer function was added to support the initialization of `ERC20Upgradeable` configuration.
+* An `initialize` initializer function was added to support the initialization of `ERC20Upgradeable` configuration.
 * A `decimals` variable was added to the constructor.
 * A storage gap was added to simplify state management in the event that state variables are added to `UpgradeableOptimismMintableERC20` in the future.
 
@@ -21,6 +21,7 @@ The `ExtendedOptimismMintableToken` inherits from the `UpgradeableOptimismMintab
 * Set the required .env variables and run `make deploy` to simulate Base Mainnet token deployment locally.
 
 ### Deployment
+* **Note**: To initialize the `ExtendedOptimismMintableToken` contract, you only need to call its `initializeV2` method. You do *not* need to call the `UpgradeableOptimismMintableERC20`'s `initialize` method, as the `initialize` method's functionality is already included in the `initializeV2` method.
 * Configure the following variables in `.env`:
     * `DEPLOYER` - the address deploying the token implementation and proxy contract.
     * `ADMIN` - the address that will end up being the owner of the token's proxy contract.
@@ -38,7 +39,7 @@ The `ExtendedOptimismMintableToken` inherits from the `UpgradeableOptimismMintab
 ## Functionality 
 
 ### Issuing and Destroying tokens
-The ExtendedOptimismMintableToken allows the `BRIDGE` address to create (`mint`) and destroy (`burn``) tokens.
+The `ExtendedOptimismMintableToken` allows the `BRIDGE` address to create (`mint`) and destroy (`burn``) tokens.
 
 #### Minting
 As on Optimism's `OptimismMintableERC20` contract, the `BRIDGE` mints tokens via the `mint` method. It specifies the
@@ -69,8 +70,8 @@ or equal to the `amount`. The abillity to burn tokens is restricted to the `BRID
 
 ### Blacklisting
 
-Addresses can be blacklisted. A blacklisted address will be unable to transfer
-tokens, approve, mint, or burn tokens.
+Addresses can be blacklisted. A blacklisted address will be unable to participate in the approval, 
+increase or decrease of allowances and will be unable to transfer, mint, or burn tokens.
 
 #### Adding a blacklisted address
 
@@ -119,15 +120,15 @@ is unpaused.
 ### Gas Abstraction
 
 #### EIP-3009
-The ExtendedOptimismMintableToken implements [EIP-3009](https://eips.ethereum.org/EIPS/eip-3009), with the additional requirement that transfers via this functionality not be called with blacklisted `from` or `to` addresses, nor while the contract is paused.
+The `ExtendedOptimismMintableToken` implements [EIP-3009](https://eips.ethereum.org/EIPS/eip-3009), with the additional requirement that transfers via this functionality not be called with blacklisted `from` or `to` addresses, nor while the contract is paused.
 
 #### EIP-2612
-The ExtendedOptimismMintableToken uses OpenZeppelin's [EIP-2612](https://eips.ethereum.org/EIPS/eip-2612) upgradeable implementation, and adds the requirement that `permit` not be called with blacklisted `owner` or `spender` addresses, nor while the contract is paused.
+The `ExtendedOptimismMintableToken` uses OpenZeppelin's [EIP-2612](https://eips.ethereum.org/EIPS/eip-2612) upgradeable implementation, and adds the requirement that `permit` not be called with blacklisted `owner` or `spender` addresses, nor while the contract is paused.
 
 ### Upgrading
 
 The Extended OptimismMintable Token uses the  Unstructured-Storage Proxy pattern
-[https://docs.openzeppelin.com/upgrades-plugins/1.x/proxies]. The contracts use storage gaps to simplify state management in the event that state variables are added to in future upgrades. [ExtendedOptimismMintableToken.sol](./src/ExtendedOptimismMintableToken.sol) is the implementation, the
+[https://docs.openzeppelin.com/upgrades-plugins/1.x/proxies]. The contracts use storage gaps to simplify state management in the event that state variables are added to in future upgrades. [`ExtendedOptimismMintableToken.sol`](./src/ExtendedOptimismMintableToken.sol) is the implementation, the
 actual token address will be a Proxy contract
 (using the code from Optimism's [Proxy.sol](https://github.com/ethereum-optimism/optimism/blob/0f07717bf06c2278bbccc9c62cad30731beeb322/packages/contracts-bedrock/contracts/universal/Proxy.sol)) which will forward all
 calls to `ExtendedOptimismMintableToken` via delegatecall. This pattern allows Coinbase to upgrade the
@@ -136,6 +137,7 @@ logic of any deployed tokens seamlessly.
 - Coinbase will upgrade the token via a call to `upgradeTo` or `upgradeToAndCall`
   if initialization is required for the new version.
 - Only the `admin` role may call `upgradeTo` or `upgradeToAndCall`.
+- For upgrades, if an initializer method is used, set a constant version in the `reinitializer` modifier that is incremented from the previous upgrade's version. This prevents the initializer method from being called multiple times. Failing to follow this guidance could introduce vulnerabilities. Additionally, note subsequently introduced `reinitializer` methods are not meant to re-execute the same initialization code used in previous versions.
 
 ### Reassigning Roles
 

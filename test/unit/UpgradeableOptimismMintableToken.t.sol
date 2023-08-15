@@ -9,7 +9,7 @@ import { Predeploys } from "@eth-optimism-bedrock/contracts/libraries/Predeploys
 import { ILegacyMintableERC20, IOptimismMintableERC20 } from "@eth-optimism-bedrock/contracts/universal/IOptimismMintableERC20.sol";
 import { UpgradeableOptimismMintableERC20V2 } from "test/fakes/UpgradeableOptimismMintableERC20V2.sol";
 import { Proxy } from "@eth-optimism-bedrock/contracts/universal/Proxy.sol";
-import { UpgradeableOptimismMintableERC20Fake } from "test/fakes/UpgradeableOptimismMintableERC20Fake.sol";
+import { UpgradeableOptimismMintableERC20 } from "src/UpgradeableOptimismMintableERC20.sol";
 
 contract UpgradeableOptimismMintableERC20_Test is Test {
     event Initialized(uint8 version);
@@ -22,8 +22,8 @@ contract UpgradeableOptimismMintableERC20_Test is Test {
     address alice = address(128);
     L2StandardBridge l2Bridge;
     ERC20 l1Token;
-    UpgradeableOptimismMintableERC20Fake l2TokenImpl;
-    UpgradeableOptimismMintableERC20Fake l2Token;
+    UpgradeableOptimismMintableERC20 l2TokenImpl;
+    UpgradeableOptimismMintableERC20 l2Token;
     Proxy proxy;
     string name;
     string symbol;
@@ -36,7 +36,7 @@ contract UpgradeableOptimismMintableERC20_Test is Test {
         name = string(abi.encodePacked("L2-", l1Token.name()));
         symbol = string(abi.encodePacked("L2-", l1Token.symbol()));
         initializedVersion = 1;
-        l2TokenImpl = new UpgradeableOptimismMintableERC20Fake(
+        l2TokenImpl = new UpgradeableOptimismMintableERC20(
             address(l2Bridge),
             address(l1Token),
             DECIMALS
@@ -45,14 +45,14 @@ contract UpgradeableOptimismMintableERC20_Test is Test {
         proxy = new Proxy(admin);
 
         initializeCall = abi.encodeCall(
-            UpgradeableOptimismMintableERC20Fake.initialize, 
+            UpgradeableOptimismMintableERC20.initialize, 
             (name, symbol)
         );
 
         vm.prank(admin);
         proxy.upgradeToAndCall(address(l2TokenImpl), initializeCall);
 
-        l2Token = UpgradeableOptimismMintableERC20Fake(address(proxy));
+        l2Token = UpgradeableOptimismMintableERC20(address(proxy));
     }
 
     function test_upgradeToAndCall_contractUpgrade_succeeds() external {
@@ -73,13 +73,13 @@ contract UpgradeableOptimismMintableERC20_Test is Test {
         vm.prank(admin);
         proxy.upgradeToAndCall(address(l2TokenImplV2), initializeV2Call);
 
-        l2Token = UpgradeableOptimismMintableERC20Fake(address(proxy));
+        l2Token = UpgradeableOptimismMintableERC20(address(proxy));
         assertEq(l2Token.name(), name);
         assertEq(l2Token.symbol(), symbol);
     }
 
     function test_initialize_succeeds() external {
-        l2TokenImpl = new UpgradeableOptimismMintableERC20Fake(
+        l2TokenImpl = new UpgradeableOptimismMintableERC20(
             address(l2Bridge),
             address(l1Token),
             DECIMALS
@@ -91,7 +91,7 @@ contract UpgradeableOptimismMintableERC20_Test is Test {
         emit Initialized(initializedVersion);
         vm.prank(admin);
         proxy.upgradeToAndCall(address(l2TokenImpl), initializeCall);
-        l2Token = UpgradeableOptimismMintableERC20Fake(address(proxy));
+        l2Token = UpgradeableOptimismMintableERC20(address(proxy));
         
         assertEq(l2Token.name(), name);
         assertEq(l2Token.symbol(), symbol);
@@ -107,7 +107,7 @@ contract UpgradeableOptimismMintableERC20_Test is Test {
     }
 
     function test_initialize_onImplementation_reverts() external {
-        l2TokenImpl = new UpgradeableOptimismMintableERC20Fake(
+        l2TokenImpl = new UpgradeableOptimismMintableERC20(
             address(l2Bridge),
             address(l1Token),
             DECIMALS

@@ -19,7 +19,6 @@ import { Semver } from "@eth-optimism-bedrock/contracts/universal/Semver.sol";
 ///         * `supportsInterface` is marked as `virtual` to allow inheriting contracts to override it.
 ///         * An `initialize` function was added to support:
 ///           - The initialization of `ERC20Upgradeable` behind a proxy contract.
-///           - The configuration of `decimals`.
 ///         * A storage gap was added to simplify state management in the event that state variables
 ///           are added to `UpgradeableOptimismMintableERC20` in the future.
 contract UpgradeableOptimismMintableERC20 is IOptimismMintableERC20, ILegacyMintableERC20, ERC20Upgradeable {
@@ -66,10 +65,10 @@ contract UpgradeableOptimismMintableERC20 is IOptimismMintableERC20, ILegacyMint
     /// @notice Initializes the UpgradeableOptimismMintableERC20 contract.
     /// @param _name   ERC20 name.
     /// @param _symbol ERC20 symbol.
-    function __UpgradeableOptimismMintableERC20__init(
+    function initialize(
         string memory _name,
         string memory _symbol
-    ) internal virtual onlyInitializing() {
+    ) external virtual initializer {
         ERC20Upgradeable.__ERC20_init(_name, _symbol);
     }
 

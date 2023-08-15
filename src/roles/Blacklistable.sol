@@ -36,11 +36,22 @@ import { AccessControlUpgradeable } from "@openzeppelin/contracts-upgradeable/ac
  * control logic.
  */
  contract Blacklistable is AccessControlUpgradeable {
+    // Role identifier for the blacklister
     bytes32 public constant BLACKLISTER_ROLE = keccak256("roles.blacklister");
 
+    // Mapping of addresses to whether the address is blacklisted or not
     mapping(address => bool) internal blacklisted;
 
+    /**
+     * @notice Emitted when an account is blacklisted
+     * @param _account  The account blacklisted
+     */
     event Blacklisted(address indexed _account);
+    
+    /**
+     * @notice Emitted when an account is unblacklisted
+     * @param _account  The account that has been unblacklisted
+     */
     event UnBlacklisted(address indexed _account);
 
     /**
