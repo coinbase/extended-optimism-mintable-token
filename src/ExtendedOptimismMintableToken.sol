@@ -118,7 +118,14 @@ contract ExtendedOptimismMintableToken is Semver, UpgradeableOptimismMintableERC
         uint8 v,
         bytes32 r,
         bytes32 s
-    ) external virtual whenNotPaused notBlacklisted(from) notBlacklisted(to) {
+    ) 
+        external
+        virtual
+        whenNotPaused
+        notBlacklisted(_msgSender())
+        notBlacklisted(from)
+        notBlacklisted(to)
+    {
         _transferWithAuthorization(from, to, value, validAfter, validBefore, nonce, v, r, s); 
     }
 
@@ -207,6 +214,7 @@ contract ExtendedOptimismMintableToken is Semver, UpgradeableOptimismMintableERC
         virtual
         override
         whenNotPaused
+        whenNotBlacklisted(_msgSender())
         notBlacklisted(owner)
         notBlacklisted(spender)
     {
