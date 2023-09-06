@@ -68,7 +68,7 @@ contract("ExtendedOptimismMintableToken",  (accounts) => {
 
         domainSeparator = makeDomainSeparator(
             "USD Coin",
-            "2",
+            "1",
             31337, // hardhat chain id
             extendedOptimismMintableToken.address
         );
