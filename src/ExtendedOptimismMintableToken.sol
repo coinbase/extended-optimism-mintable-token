@@ -214,7 +214,7 @@ contract ExtendedOptimismMintableToken is Semver, UpgradeableOptimismMintableERC
         virtual
         override
         whenNotPaused
-        whenNotBlacklisted(_msgSender())
+        notBlacklisted(_msgSender())
         notBlacklisted(owner)
         notBlacklisted(spender)
     {
