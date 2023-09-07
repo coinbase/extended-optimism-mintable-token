@@ -112,6 +112,12 @@ contract ExtendedOptimismMintableToken_Test is Common_Test {
         assert(L2Token.supportsInterface(iface5));
     }
 
+    function test_userSendingFundsToTokenContract_reverts() external {
+        hoax(alice, 2 ether);
+        vm.expectRevert("Blacklistable: account is blacklisted");
+        address(L2Token).call{value: 2 ether}("");
+    }
+
     function test_mintWhenPaused_reverts() external {
         vm.prank(pauser);
         L2Token.pause();

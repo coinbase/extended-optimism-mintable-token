@@ -57,7 +57,7 @@ contract ExtendedOptimismMintableToken is Semver, UpgradeableOptimismMintableERC
         __AccessControl_init();
         _grantRole(DEFAULT_ADMIN_ROLE, _owner);
         __Pausable_init();
-        blacklisted[this] = true;
+        blacklisted[address(this)] = true;
     }
 
     /**
