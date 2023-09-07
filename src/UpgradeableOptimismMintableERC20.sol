@@ -4,7 +4,6 @@ pragma solidity 0.8.15;
 import { ERC20Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import { IERC165Upgradeable } from "@openzeppelin/contracts-upgradeable/utils/introspection/IERC165Upgradeable.sol";
 import { ILegacyMintableERC20, IOptimismMintableERC20 } from "@eth-optimism-bedrock/contracts/universal/IOptimismMintableERC20.sol";
-import { Semver } from "@eth-optimism-bedrock/contracts/universal/Semver.sol";
 
 /// @title UpgradeableOptimismMintableERC20
 /// @notice UpgradeableOptimismMintableERC20 is a modified version of the OptimismMintableERC20 contract 
