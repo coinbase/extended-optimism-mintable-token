@@ -54,8 +54,8 @@ contract UpgradeToExtendedOptimismMintableToken is Script {
         require(keccak256(abi.encode(extendedOptimismMintableToken.name())) == keccak256(abi.encode(name)), "UpgradeToExtendedOptimismMintableToken: token name incorrect");
         require(keccak256(abi.encode(extendedOptimismMintableToken.symbol())) == keccak256(abi.encode(symbol)), "UpgradeToExtendedOptimismMintableToken: token symbol incorrect");
         require(extendedOptimismMintableToken.BRIDGE() == Predeploys.L2_STANDARD_BRIDGE, 
-            "UpgradeToExtendedOptimismMintableToken: token l2Bridge incorrect")
-        ;
+            "UpgradeToExtendedOptimismMintableToken: token l2Bridge incorrect"
+        );
         require(extendedOptimismMintableToken.REMOTE_TOKEN() == remoteToken, 
             "UpgradeToExtendedOptimismMintableToken: token remoteToken incorrect"
         );
@@ -69,5 +69,11 @@ contract UpgradeToExtendedOptimismMintableToken is Script {
         extendedOptimismMintableToken.grantRole(PAUSER_ROLE, pauser);
         vm.broadcast(owner);
         extendedOptimismMintableToken.grantRole(BLACKLISTER_ROLE, blacklister);
+        require(extendedOptimismMintableToken.hasRole(PAUSER_ROLE, pauser),
+            "DeployExtendedOptimismMintableToken: pauser role is incorrect" 
+        );
+        require(extendedOptimismMintableToken.hasRole(BLACKLISTER_ROLE, blacklister),
+            "DeployExtendedOptimismMintableToken: blacklister is role incorrect" 
+        );
     }
 }
