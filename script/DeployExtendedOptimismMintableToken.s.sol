@@ -5,27 +5,26 @@ import { console } from "forge-std/console.sol";
 import { Script } from "forge-std/Script.sol";
 import { ExtendedOptimismMintableToken } from "src/ExtendedOptimismMintableToken.sol";
 import { Proxy } from "@eth-optimism-bedrock/contracts/universal/Proxy.sol";
+import { Predeploys } from "@eth-optimism-bedrock/contracts/libraries/Predeploys.sol";
 
 contract DeployExtendedOptimismMintableToken is Script {
     bytes32 public constant PAUSER_ROLE = keccak256("roles.pauser");
     bytes32 public constant BLACKLISTER_ROLE = keccak256("roles.blacklister");
 
-    function run(
-        address deployer,
-        address admin,
-        address l2Bridge,
-        address remoteToken,
-        string memory name,
-        string memory symbol,
-        address pauser,
-        address blacklister,
-        address owner,
-        uint8 decimals
-    )
-        public
+    address public admin = vm.envAddress("ADMIN");
+    address public owner = vm.envAddress("OWNER");
+    address public pauser = vm.envAddress("PAUSER");
+    address public blacklister = vm.envAddress("BLACKLISTER");
+    address public remoteToken = vm.envAddress("REMOTE_TOKEN");
+    uint8 public decimals = uint8(vm.envUint("DECIMALS")); 
+    string public name = vm.envString("NAME");
+    string public symbol = vm.envString("SYMBOL");
+
+    function run()
+        public returns(address)
     {
         console.log("Admin: %s", admin);
-        console.log("L2 Bridge: %s", l2Bridge);
+        console.log("L2 Bridge: %s", Predeploys.L2_STANDARD_BRIDGE);
         console.log("Remote Token: %s", remoteToken);
         console.log("Name: %s", name);
         console.log("Symbol: %s", symbol);
@@ -36,12 +35,12 @@ contract DeployExtendedOptimismMintableToken is Script {
 
         vm.broadcast();
         ExtendedOptimismMintableToken extendedOptimismMintableTokenImpl = new ExtendedOptimismMintableToken(
-            l2Bridge,
+            Predeploys.L2_STANDARD_BRIDGE,
             remoteToken,
             decimals
         );
 
-        require(extendedOptimismMintableTokenImpl.BRIDGE() == l2Bridge, 
+        require(extendedOptimismMintableTokenImpl.BRIDGE() == Predeploys.L2_STANDARD_BRIDGE, 
             "DeployExtendedOptimismMintableToken: token l2Bridge incorrect")
         ;
         require(extendedOptimismMintableTokenImpl.REMOTE_TOKEN() == remoteToken, 
@@ -66,20 +65,36 @@ contract DeployExtendedOptimismMintableToken is Script {
             owner
         );
         
+        vm.broadcast(admin);
         extendedOptimismMintableTokenProxy.upgradeToAndCall(address(extendedOptimismMintableTokenImpl), initializeCall);
         require(keccak256(abi.encode(extendedOptimismMintableToken.name())) == keccak256(abi.encode(name)), "DeployExtendedOptimismMintableToken: token name incorrect");
         require(keccak256(abi.encode(extendedOptimismMintableToken.symbol())) == keccak256(abi.encode(symbol)), "DeployExtendedOptimismMintableToken: token symbol incorrect");
+        require(extendedOptimismMintableToken.BRIDGE() == Predeploys.L2_STANDARD_BRIDGE, 
+            "DeployExtendedOptimismMintableToken: token l2Bridge incorrect"
+        );
+        require(extendedOptimismMintableToken.REMOTE_TOKEN() == remoteToken, 
+            "DeployExtendedOptimismMintableToken: token remoteToken incorrect"
+        );
+        require(extendedOptimismMintableToken.decimals() == decimals, 
+            "DeployExtendedOptimismMintableToken: token decimals incorrect"
+        );
 
         console.log("extendedOptimismMintableToken initialized"); 
 
-        vm.broadcast(deployer);
-        extendedOptimismMintableTokenProxy.changeAdmin(admin);
-        vm.broadcast(address(0));
+        vm.broadcast(admin);
         require(extendedOptimismMintableTokenProxy.admin() == admin, "DeployExtendedOptimismMintableToken: proxy admin transfer failed");
 
         vm.broadcast(owner);
         extendedOptimismMintableToken.grantRole(PAUSER_ROLE, pauser);
         vm.broadcast(owner);
         extendedOptimismMintableToken.grantRole(BLACKLISTER_ROLE, blacklister);
+        require(extendedOptimismMintableToken.hasRole(PAUSER_ROLE, pauser),
+            "DeployExtendedOptimismMintableToken: pauser role is incorrect" 
+        );
+        require(extendedOptimismMintableToken.hasRole(BLACKLISTER_ROLE, blacklister),
+            "DeployExtendedOptimismMintableToken: blacklister role is incorrect" 
+        );
+
+        return address(extendedOptimismMintableToken);
     }
 }
