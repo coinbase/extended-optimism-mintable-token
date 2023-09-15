@@ -63,6 +63,14 @@ contract UpgradeToExtendedOptimismMintableToken is Script {
             "UpgradeToExtendedOptimismMintableToken: token decimals incorrect"
         );
 
+        // Ensure that contract is properly initialized
+        // 0 is the storage slot for `_initialized` from https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable/blob/0a2cb9a445c365870ed7a8ab461b12acf3e27d63/contracts/proxy/utils/Initializable.sol#L62
+        uint64 initializedVersion = uint64(uint(vm.load(
+            address(extendedOptimismMintableToken),
+             0
+        )));
+        require(initializedVersion == 2, "UpgradeToExtendedOptimismMintableToken: initialized version is not 2");
+
         console.log("extendedOptimismMintableToken initialized"); 
 
         vm.broadcast(owner);
