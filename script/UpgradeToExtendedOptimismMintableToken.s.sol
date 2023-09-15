@@ -28,6 +28,14 @@ contract UpgradeToExtendedOptimismMintableToken is Script {
         address remoteToken = upgradeableOptimismMintableERC20.REMOTE_TOKEN();
         uint8 decimals = upgradeableOptimismMintableERC20.decimals();
 
+        // Ensure that contract is properly initialized
+        // 0 is the storage slot for `_initialized` from https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable/blob/0a2cb9a445c365870ed7a8ab461b12acf3e27d63/contracts/proxy/utils/Initializable.sol#L62
+        uint64 initializedVersionPreUpgrade = uint64(uint(vm.load(
+            address(upgradeableOptimismMintableERC20),
+             0
+        )));
+        require(initializedVersionPreUpgrade == 1, "UpgradeToExtendedOptimismMintableToken: initialized version is not 1 prior to attempting upgrade");
+
         console.log("Proxy: %s", proxy);
         console.log("New Implementation: %s", newImplementation);
         console.log("L2 Bridge: %s", Predeploys.L2_STANDARD_BRIDGE);
@@ -65,11 +73,11 @@ contract UpgradeToExtendedOptimismMintableToken is Script {
 
         // Ensure that contract is properly initialized
         // 0 is the storage slot for `_initialized` from https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable/blob/0a2cb9a445c365870ed7a8ab461b12acf3e27d63/contracts/proxy/utils/Initializable.sol#L62
-        uint64 initializedVersion = uint64(uint(vm.load(
+        uint64 initializedVersionPostUpgrade = uint64(uint(vm.load(
             address(extendedOptimismMintableToken),
              0
         )));
-        require(initializedVersion == 2, "UpgradeToExtendedOptimismMintableToken: initialized version is not 2");
+        require(initializedVersionPostUpgrade == 2, "UpgradeToExtendedOptimismMintableToken: initialized version is not 2 following attempted upgrade");
 
         console.log("extendedOptimismMintableToken initialized"); 
 
