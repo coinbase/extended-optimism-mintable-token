@@ -8,9 +8,8 @@ install-foundry:
 
 
 .PHONY: build
-build:
-	solidity-deps
-	yarn install
+build: solidity-deps
+	   yarn install
 
 .PHONY: solidity-deps
 solidity-deps: checkout-op-commit
