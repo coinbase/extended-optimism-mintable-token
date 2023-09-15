@@ -7,6 +7,7 @@ import {
 } from "src/eip-3009/IEIP3009.sol";
 import { IERC20Permit } from "@openzeppelin/contracts/token/ERC20/extensions/draft-IERC20Permit.sol";
 import { IERC165 } from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
+import { ExtendedOptimismMintableToken } from "src/ExtendedOptimismMintableToken.sol";
 
 contract ExtendedOptimismMintableToken_Test is Common_Test {
     event Mint(address indexed account, uint256 amount);
@@ -110,6 +111,21 @@ contract ExtendedOptimismMintableToken_Test is Common_Test {
             L2Token.DOMAIN_SEPARATOR.selector;
         assertEq(iface5, type(IERC20Permit).interfaceId);
         assert(L2Token.supportsInterface(iface5));
+    }
+
+    function test_initializeV2CalledAgain_reverts() external {
+        bytes memory initializeCall = abi.encodeCall(
+            ExtendedOptimismMintableToken.initializeV2, 
+            (
+                string(abi.encodePacked("L2-", L1Token.name())),
+                string(abi.encodePacked("L2-", L1Token.symbol())),
+                owner
+            )
+        );
+
+        vm.prank(admin);
+        vm.expectRevert();
+        ExtendedOptimismMintableTokenProxy.upgradeToAndCall(address(L2TokenImpl), initializeCall);
     }
 
     function test_userSendingFundsToTokenContract_reverts() external {
