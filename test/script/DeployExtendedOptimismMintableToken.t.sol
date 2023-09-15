@@ -41,6 +41,12 @@ contract DeployExtendedOptimismMintableToken_Test is Common_Test {
         assertEq(adminSlot, bytes32(uint256(uint160(address(admin)))));
         
         // ExtendedOptimismMintableToken assertions
+        // Check initialized version
+        uint64 initializedVersion = uint64(uint(vm.load(
+            address(L2Token),
+             0
+        )));
+        assertEq(initializedVersion, 2);
         assertEq(L2Token.BRIDGE(), Predeploys.L2_STANDARD_BRIDGE);
         assertEq(L2Token.REMOTE_TOKEN(), vm.envAddress("REMOTE_TOKEN"));
         assertEq(L2Token.decimals(), DECIMALS);
