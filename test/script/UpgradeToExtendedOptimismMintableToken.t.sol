@@ -44,8 +44,14 @@ contract UpgradeToExtendedOptimismMintableToken_Test is Common_Test {
         assertEq(ExtendedOptimismMintableTokenProxy.implementation(), address(L2TokenImpl));
         vm.prank(address(0));
         assertEq(ExtendedOptimismMintableTokenProxy.admin(), admin);
-        
+
         // ExtendedOptimismMintableToken assertions
+        // Check initialized version
+        uint64 initializedVersion = uint64(uint(vm.load(
+            address(L2Token),
+             0
+        )));
+        assertEq(initializedVersion, 2);
         assertEq(L2Token.BRIDGE(), L2Token.BRIDGE());
         assertEq(L2Token.REMOTE_TOKEN(), L2Token.REMOTE_TOKEN());
         assertEq(L2Token.decimals(), L2Token.decimals());
