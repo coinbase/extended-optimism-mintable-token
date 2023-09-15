@@ -369,7 +369,7 @@ export function testPermit({
       );
     });
 
-    it("reverts if the owner or the spender is blacklisted", async () => {
+    it("reverts if the owner, the spender or the sender is blacklisted", async () => {
         const { owner, spender, value, nonce, deadline } = permitParams;
         // create a signed permit
         const { v, r, s } = signPermit(
@@ -399,6 +399,13 @@ export function testPermit({
   
         // try to submit the permit
         await expectRevert(submitTx(), "account is blacklisted");
+
+        // sender is blacklisted
+        await fiatToken.unBlacklist(spender, { from: roleOwnerBlacklisterPauser });
+        await fiatToken.blacklist(charlie, { from: roleOwnerBlacklisterPauser });
+
+        // try to submit the permit
+        await expectRevert(submitTx(), "account is blacklisted");        
       });
 
       it("reverts if the contract is paused", async () => {

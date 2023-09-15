@@ -417,7 +417,7 @@ export function testTransferWithAuthorization({
         );
     });
 
-    it("reverts if the payer or the payee is blacklisted", async () => {
+    it("reverts if the payer, the payee or the sender is blacklisted", async () => {
         const { from, to, value, validAfter, validBefore } = transferParams;
         // create a signed authorization
         const { v, r, s } = signTransferAuthorization(
@@ -455,6 +455,13 @@ export function testTransferWithAuthorization({
         await fiatToken.unBlacklist(from, { from: roleOwnerBlacklisterPauser });
         await fiatToken.blacklist(to, { from: roleOwnerBlacklisterPauser });
   
+        // try to submit the authorization
+        await expectRevert(submitTx(), "account is blacklisted");
+
+        // sender is blacklisted
+        await fiatToken.unBlacklist(to, { from: roleOwnerBlacklisterPauser });
+        await fiatToken.blacklist(charlie, { from: roleOwnerBlacklisterPauser });
+
         // try to submit the authorization
         await expectRevert(submitTx(), "account is blacklisted");
     });
