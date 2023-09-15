@@ -21,7 +21,7 @@ The `ExtendedOptimismMintableToken` inherits from the `UpgradeableOptimismMintab
 * Set the required .env variables and run `make deploy` to simulate Base Mainnet token deployment locally.
 
 ### Deployment
-* **Note**: To initialize the `ExtendedOptimismMintableToken` contract, you only need to call its `initializeV2` method. You do *not* need to call the `UpgradeableOptimismMintableERC20`'s `initialize` method, as the `initialize` method's functionality is already included in the `initializeV2` method.
+* **Note**: To initialize the `ExtendedOptimismMintableToken` contract, you need to call the `initialize` method inherited from `UpgradeableOptimismMintableERC20`, and then  `ExtendedOptimismMintableToken`'s `initializeV2` method.
 * Configure the following variables in `.env`:
     * `DEPLOYER` - the address deploying the token implementation and proxy contract.
     * `ADMIN` - the address that will end up being the owner of the token's proxy contract.
