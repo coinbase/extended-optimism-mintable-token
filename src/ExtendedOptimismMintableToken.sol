@@ -53,9 +53,10 @@ contract ExtendedOptimismMintableToken is Semver, UpgradeableOptimismMintableERC
         address _owner
     ) external virtual reinitializer(2) {
         EIP712Upgradeable.__EIP712_init(_name, "1");
-        __AccessControl_init();
         _grantRole(DEFAULT_ADMIN_ROLE, _owner);
         __Pausable_init();
+        // No-op initializations are called so as to make all inherited contract's initialization explicit
+        __AccessControl_init();
         blacklisted[address(this)] = true;
     }
 
