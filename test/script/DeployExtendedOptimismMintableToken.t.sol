@@ -17,9 +17,12 @@ contract DeployExtendedOptimismMintableToken_Test is Common_Test {
         L2Token = ExtendedOptimismMintableToken(address(ExtendedOptimismMintableTokenProxy));
 
         vm.setEnv("ADMIN", vm.toString(admin));
-        vm.setEnv("OWNER", vm.toString(owner));
         vm.setEnv("PAUSER", vm.toString(pauser));
         vm.setEnv("BLACKLISTER", vm.toString(blacklister));
+        vm.setEnv("REMOTE_TOKEN", vm.toString(address(99)));
+        vm.setEnv("NAME", "Test");
+        vm.setEnv("SYMBOL", "TST");
+        vm.setEnv("OWNER", vm.toString(owner));
         vm.setEnv("DECIMALS", vm.toString(DECIMALS));
 
         deployer = new DeployExtendedOptimismMintableToken();
