@@ -11,6 +11,7 @@ import {
 import { IERC20Permit } from "@openzeppelin/contracts/token/ERC20/extensions/draft-IERC20Permit.sol";
 import { Proxy } from "@eth-optimism-bedrock/contracts/universal/Proxy.sol";
 import { ExtendedOptimismMintableToken } from "src/ExtendedOptimismMintableToken.sol";
+import { UpgradeableOptimismMintableERC20 } from "src/UpgradeableOptimismMintableERC20.sol";
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { IERC165 } from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 // for testing
@@ -38,6 +39,7 @@ contract Common_Test is Test {
     L2StandardBridge L2Bridge;
     ERC20 L1Token;
     ExtendedOptimismMintableToken L2TokenImpl;
+    UpgradeableOptimismMintableERC20 L2TokenImplV1;
     ExtendedOptimismMintableToken L2Token;
     Proxy ExtendedOptimismMintableTokenProxy;
 
@@ -49,6 +51,11 @@ contract Common_Test is Test {
     function setUp() public virtual {
         L2Bridge = L2StandardBridge(payable(Predeploys.L2_STANDARD_BRIDGE));
         L1Token = new ERC20("Native L1 Token", "L1T");
+        L2TokenImplV1 = new UpgradeableOptimismMintableERC20(
+            address(L2Bridge),
+            address(L1Token),
+            DECIMALS
+        );
         L2TokenImpl = new ExtendedOptimismMintableToken(
             address(L2Bridge),
             address(L1Token),
