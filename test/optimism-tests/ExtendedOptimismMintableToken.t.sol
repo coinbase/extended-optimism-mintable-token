@@ -152,6 +152,17 @@ contract ExtendedOptimismMintableToken_Test is Common_Test {
         L2Token.burn(alice, 100);
     }
 
+    function test_transfer_succeeds() external {
+        vm.prank(address(L2Bridge));
+        L2Token.mint(alice, 100);
+
+        vm.prank(address(alice));
+        L2Token.transfer(owner, 100);
+
+        assertEq(L2Token.balanceOf(alice), 0);
+        assertEq(L2Token.balanceOf(owner), 100);
+    }
+
     function test_transferWhenPaused_reverts() external {
         vm.prank(pauser);
         L2Token.pause();
@@ -161,6 +172,20 @@ contract ExtendedOptimismMintableToken_Test is Common_Test {
         L2Token.transfer(alice, 100);
     }
 
+    function test_transferFrom_succeeds() external {
+        vm.prank(address(L2Bridge));
+        L2Token.mint(alice, 100);
+
+        vm.prank(address(alice));
+        L2Token.approve(owner, 100);
+
+        vm.prank(address(owner));
+        L2Token.transferFrom(alice, owner, 100);
+
+        assertEq(L2Token.balanceOf(alice), 0);
+        assertEq(L2Token.balanceOf(owner), 100);
+    }
+
     function test_transferFromWhenPaused_reverts() external {
         vm.prank(pauser);
         L2Token.pause();
@@ -168,6 +193,13 @@ contract ExtendedOptimismMintableToken_Test is Common_Test {
         vm.expectRevert("Pausable: paused");
         vm.prank(address(L2Bridge));
         L2Token.transferFrom(owner, alice, 100);
+    }
+
+    function test_approve_succeeds() external {
+        vm.prank(address(L2Bridge));
+        L2Token.approve(alice, 100);
+
+        assertEq(L2Token.allowance(address(L2Bridge), alice), 100);
     }
 
     function test_approveWhenPaused_reverts() external {
