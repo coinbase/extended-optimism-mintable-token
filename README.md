@@ -27,7 +27,7 @@ The `ExtendedOptimismMintableToken` inherits from the `UpgradeableOptimismMintab
     * `ADMIN` - the address that will end up being the owner of the token's proxy contract.
     * `L2_BRIDGE` - the address of the [`L2StandardBridge`](https://github.com/ethereum-optimism/optimism/blob/0f07717bf06c2278bbccc9c62cad30731beeb322/packages/contracts-bedrock/contracts/L2/L2StandardBridge.sol) contract which is able to mint and burn the token being deployed.
     * `REMOTE_TOKEN` - the L1 address of the L2 bridged token being deployed.
-    * `NAME` - the `ERC20` [`name`](https://eips.ethereum.org/EIPS/eip-20#name) of the bridged token.
+    * `NAME` - the `ERC20` [`name`](https://eips.ethereum.org/EIPS/eip-20#name) of the bridged token. This is also used for the `EIP-712` domain separator [`name`](https://eips.ethereum.org/EIPS/eip-712#definition-of-domainseparator).
     * `SYMBOL` - the `ERC20` [`symbol`](https://eips.ethereum.org/EIPS/eip-20#symbol) of the bridged token.
     * `DECIMALS` - the `ERC20` [`decimals`](https://eips.ethereum.org/EIPS/eip-20#decimals) of the bridged token.
     * `PAUSER` - the only address for the role that can pause the contract, which prevents all transfers, minting, and burning
