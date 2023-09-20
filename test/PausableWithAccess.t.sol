@@ -22,6 +22,13 @@ contract PausableWithAccess_Test is Common_Test {
     }
 
     // ********* PausableWithAccess.sol functionality tests *********
+     function test_pauserRoleIsCorrectHash_succeeds() external {
+        assertEq(
+            pausableWithAccess.PAUSER_ROLE(),
+            keccak256("roles.pauser")
+        );
+     }
+
     function test_pausedAfterPausing_succeeds() public {
         vm.expectEmit(true, true, true, true, address(pausableWithAccess));
         emit Paused(pauser);

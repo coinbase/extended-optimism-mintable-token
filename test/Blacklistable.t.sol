@@ -20,6 +20,13 @@ contract Blacklistable_Test is Common_Test {
         blacklistable.grantRole(BLACKLISTER_ROLE, blacklister);
     }
 
+    function test_blacklisterRoleIsCorrectHash_succeeds() external {
+        assertEq(
+            blacklistable.BLACKLISTER_ROLE(),
+            keccak256("roles.blacklister")
+        );
+    }
+
     function test_blacklistedAfterBlacklisting_succeeds() external {
         vm.expectEmit(true, true, true, true);
         emit Blacklisted(alice);
