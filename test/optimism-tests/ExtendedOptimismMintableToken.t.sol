@@ -113,19 +113,9 @@ contract ExtendedOptimismMintableToken_Test is Common_Test {
         assert(L2Token.supportsInterface(iface5));
     }
 
-    function test_initializeV2CalledAgain_reverts() external {
-        bytes memory initializeCall = abi.encodeCall(
-            ExtendedOptimismMintableToken.initializeV2, 
-            (
-                string(abi.encodePacked("L2-", L1Token.name())),
-                string(abi.encodePacked("L2-", L1Token.symbol())),
-                owner
-            )
-        );
-
-        vm.prank(admin);
-        vm.expectRevert();
-        ExtendedOptimismMintableTokenProxy.upgradeToAndCall(address(L2TokenImpl), initializeCall);
+    function test_initializeV2CalledTwice_reverts() external {
+        vm.expectRevert("Initializable: contract is already initialized");
+        L2Token.initializeV2("L2 Token Name", "L2S", owner);
     }
 
     function test_userSendingFundsToTokenContract_reverts() external {
