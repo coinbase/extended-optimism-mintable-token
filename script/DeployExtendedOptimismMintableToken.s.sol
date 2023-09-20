@@ -91,7 +91,7 @@ contract DeployExtendedOptimismMintableToken is Script {
         require(extendedOptimismMintableTokenProxy.admin() == admin, "DeployExtendedOptimismMintableToken: proxy admin transfer failed");
 
         vm.broadcast(admin);
-        extendedOptimismMintableToken.initializeV2(name, symbol, owner);
+        extendedOptimismMintableToken.initializeV2(name, owner);
 
         vm.broadcast(owner);
         extendedOptimismMintableToken.grantRole(PAUSER_ROLE, pauser);

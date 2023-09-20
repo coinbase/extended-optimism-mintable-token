@@ -27,14 +27,10 @@ contract("ExtendedOptimismMintableToken",  (accounts) => {
                 name: "name"
             },
             {
-                type: "string",
-                name: "symbol"
-            },
-            {
                 type: "address",
                 name: "_owner"
             }]
-        }, ["USD Coin", "USDC.o", roleOwnerBlacklisterPauser]);
+        }, ["USD Coin", roleOwnerBlacklisterPauser]);
 
         extendedOptimismMintableTokenImpl = await ExtendedOptimismMintableToken.new(
             bridgeAddress,

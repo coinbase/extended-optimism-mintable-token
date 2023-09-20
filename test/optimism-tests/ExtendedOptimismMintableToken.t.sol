@@ -115,7 +115,7 @@ contract ExtendedOptimismMintableToken_Test is Common_Test {
 
     function test_initializeV2CalledTwice_reverts() external {
         vm.expectRevert("Initializable: contract is already initialized");
-        L2Token.initializeV2("L2 Token Name", "L2S", owner);
+        L2Token.initializeV2("L2 Token Name", owner);
     }
 
     function test_userSendingFundsToTokenContract_reverts() external {

@@ -53,7 +53,6 @@ contract UpgradeToExtendedOptimismMintableToken is Script {
         bytes memory initializeCall = abi.encodeWithSelector(
             ExtendedOptimismMintableToken.initializeV2.selector,
             name,
-            symbol,
             owner
         );
 

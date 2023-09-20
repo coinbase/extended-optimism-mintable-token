@@ -68,7 +68,6 @@ contract Common_Test is Test {
             ExtendedOptimismMintableToken.initializeV2, 
             (
                 string(abi.encodePacked("L2-", L1Token.name())),
-                string(abi.encodePacked("L2-", L1Token.symbol())),
                 owner
             )
         );
