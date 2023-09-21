@@ -152,8 +152,8 @@ reassign itself and the `blacklister` and `pauser` roles. It cannot re-assign th
 - `changeRolesAdmin` updates the `DEFAULT_ROLE_ADMIN` role to a new address.
 - `changeRolesAdmin` may only be called by the `DEFAULT_ROLE_ADMIN` role.
 
-### Convention for function parameters
-
+### Convention for function parameter styling
+Where referencing code from other codebases, we have followed their parameter styling convention (ex. prefixing parameters with an underscore in the `mint` and `burn` methods as the Optimism repo does for their OptimismMintableERC20 contract, OpenZeppelin ERC20 methods, etc). For consistency, in methods like `initializeV2` where one parameter (`_name`) is prefixed with an underscore (in this case to differentiate it from the storage variable it's meant to fill), we prefix the other parameters for the same function with an underscore. Otherwise, function parameters are not prefixed with underscores and are written in camelCase. 
 
 ### Optimism Citation
 This work uses software from The Optimism Monorepo:
