@@ -287,7 +287,24 @@ contract ExtendedOptimismMintableToken_Test is Common_Test {
     function test_renounceRole_reverts() external {
         vm.expectRevert("ExtendedOptimismMintableToken: Cannot renounce role");
         L2Token.renounceRole(DEFAULT_ADMIN_ROLE, rolesAdmin);
-        
 
+    }
+
+    function test_changeRolesAdmin_succeeds() external {
+        vm.prank(rolesAdmin);
+        L2Token.changeRolesAdmin(alice);
+        assertEq(L2Token.hasRole(DEFAULT_ADMIN_ROLE, alice), true);
+    }
+    
+    function test_changeRolesAdminWhenNotRolesAdmin_reverts() external {
+        vm.expectRevert(bytes(string.concat(
+            "AccessControl: account ",
+            addressToString(alice),
+            " is missing role ",
+            roleToString(L2Token.DEFAULT_ADMIN_ROLE())
+        )));
+
+        vm.prank(alice);
+        L2Token.changeRolesAdmin(alice);
     }
 }

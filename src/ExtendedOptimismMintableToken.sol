@@ -381,6 +381,14 @@ contract ExtendedOptimismMintableToken is Semver, UpgradeableOptimismMintableERC
     }
 
     /**
+    * @dev Allows the current rolesAdmin to transfer control of the roles to a new rolesAdmin.
+    * @param newRolesAdmin The address to transfer the role administration capability (i.e. role of `DEFAULT_ADMIN_ROLE`) to.
+    */
+    function changeRolesAdmin(address newRolesAdmin) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        _grantRole(DEFAULT_ADMIN_ROLE, newRolesAdmin);
+    }
+
+    /**
      * @notice Internal function to process transfers
      * @param from  Payer's address
      * @param to    Payee's address
