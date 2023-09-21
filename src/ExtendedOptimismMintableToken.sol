@@ -44,14 +44,14 @@ contract ExtendedOptimismMintableToken is Semver, UpgradeableOptimismMintableERC
     /**
      * @notice Initializer method 
      * @param _name         EIP-712 name. Suggested convention is to use the ERC20 name.
-     * @param _owner        Address designated for the owner role.
+     * @param _rolesAdmin        Address designated for the rolesAdmin role.
      */
     function initializeV2(
         string memory _name,
-        address _owner
+        address _rolesAdmin
     ) external virtual reinitializer(2) {
         EIP712Upgradeable.__EIP712_init(_name, "1");
-        _grantRole(DEFAULT_ADMIN_ROLE, _owner);
+        _grantRole(DEFAULT_ADMIN_ROLE, _rolesAdmin);
         __Pausable_init();
         // No-op initializations are called so as to make all inherited contract's initialization explicit
         __AccessControl_init();

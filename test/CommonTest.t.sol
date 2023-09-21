@@ -30,7 +30,7 @@ contract Common_Test is Test {
 
     address admin = address(56);
     address alice = address(128);
-    address owner = address(500);
+    address rolesAdmin = address(500);
     address pauser = address(256);
     address blacklister = address(512);
     uint8 constant DECIMALS = 6;
@@ -68,7 +68,7 @@ contract Common_Test is Test {
             ExtendedOptimismMintableToken.initializeV2, 
             (
                 string(abi.encodePacked("L2-", L1Token.name())),
-                owner
+                rolesAdmin
             )
         );
 
@@ -78,9 +78,9 @@ contract Common_Test is Test {
         L2Token = ExtendedOptimismMintableToken(address(ExtendedOptimismMintableTokenProxy));
 
         // Set up roles
-        vm.prank(owner);
+        vm.prank(rolesAdmin);
         L2Token.grantRole(PAUSER_ROLE, pauser);
-        vm.prank(owner);
+        vm.prank(rolesAdmin);
         L2Token.grantRole(BLACKLISTER_ROLE, blacklister);
     }
 

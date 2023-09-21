@@ -15,7 +15,7 @@ contract UpgradeToExtendedOptimismMintableToken is Script {
     address payable public newImplementation = payable(vm.envAddress("NEW_IMPLEMENTATION_ADDRESS"));
     address payable public proxy = payable(vm.envAddress("PROXY_ADDRESS"));
     address public admin = vm.envAddress("ADMIN_ADDRESS");
-    address public owner = vm.envAddress("OWNER_ADDRESS");
+    address public rolesAdmin = vm.envAddress("DEFAULT_ROLE_ADMIN_ADDRESS");
     address public pauser = vm.envAddress("PAUSER_ADDRESS");
     address public blacklister = vm.envAddress("BLACKLISTER_ADDRESS");
 
@@ -43,8 +43,8 @@ contract UpgradeToExtendedOptimismMintableToken is Script {
         console.log("Decimals: %s", decimals);
         console.log("Name: %s", name);
         console.log("Symbol: %s", symbol);
-        console.log("Owner: %s", owner);
-        console.log("Owner: %s", pauser);
+        console.log("RolesAdmin: %s", rolesAdmin);
+        console.log("Pauser: %s", pauser);
         console.log("Blacklister: %s", blacklister);
 
 
@@ -53,7 +53,7 @@ contract UpgradeToExtendedOptimismMintableToken is Script {
         bytes memory initializeCall = abi.encodeWithSelector(
             ExtendedOptimismMintableToken.initializeV2.selector,
             name,
-            owner
+            rolesAdmin
         );
 
         vm.broadcast(admin);
@@ -80,9 +80,9 @@ contract UpgradeToExtendedOptimismMintableToken is Script {
 
         console.log("extendedOptimismMintableToken initialized"); 
 
-        vm.broadcast(owner);
+        vm.broadcast(rolesAdmin);
         extendedOptimismMintableToken.grantRole(PAUSER_ROLE, pauser);
-        vm.broadcast(owner);
+        vm.broadcast(rolesAdmin);
         extendedOptimismMintableToken.grantRole(BLACKLISTER_ROLE, blacklister);
         require(extendedOptimismMintableToken.hasRole(PAUSER_ROLE, pauser),
             "DeployExtendedOptimismMintableToken: pauser role is incorrect" 

@@ -13,7 +13,7 @@ export function testCancelAuthorization({
   getFiatToken,
   getDomainSeparator,
   fiatTokenOwner,
-  roleOwnerBlacklisterPauser,
+  rolesAdminBlacklisterPauser,
   accounts,
 }: TestParams): void {
   describe("cancelAuthorization", () => {
@@ -256,7 +256,7 @@ export function testCancelAuthorization({
         );
   
         // pause the contract
-        await fiatToken.pause({ from: roleOwnerBlacklisterPauser });
+        await fiatToken.pause({ from: rolesAdminBlacklisterPauser });
   
         // try to submit the cancellation
         await expectRevert(

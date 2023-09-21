@@ -8,7 +8,7 @@ import { Blacklistable } from "src/roles/Blacklistable.sol";
 
 contract BlacklistableFake is Blacklistable {
     
-    constructor(address _owner){
-        _grantRole(DEFAULT_ADMIN_ROLE, _owner);
+    constructor(address _rolesAdmin){
+        _grantRole(DEFAULT_ADMIN_ROLE, _rolesAdmin);
     }
 }

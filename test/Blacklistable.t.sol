@@ -14,9 +14,9 @@ contract Blacklistable_Test is Common_Test {
     function setUp() public virtual override {
         super.setUp();
 
-        blacklistable = new BlacklistableFake(owner);
+        blacklistable = new BlacklistableFake(rolesAdmin);
 
-        vm.prank(owner);
+        vm.prank(rolesAdmin);
         blacklistable.grantRole(BLACKLISTER_ROLE, blacklister);
     }
 
@@ -50,10 +50,10 @@ contract Blacklistable_Test is Common_Test {
     }
 
     function test_nonBlacklisterBlacklisting_reverts() external{
-        vm.prank(owner);
+        vm.prank(rolesAdmin);
         vm.expectRevert(bytes(string.concat(
             "AccessControl: account ",
-            addressToString(owner),
+            addressToString(rolesAdmin),
             " is missing role ",
             roleToString(BLACKLISTER_ROLE)
         )));
@@ -65,10 +65,10 @@ contract Blacklistable_Test is Common_Test {
         blacklistable.blacklist(alice);
         assertEq(blacklistable.isBlacklisted(alice), true);
 
-        vm.prank(owner);
+        vm.prank(rolesAdmin);
         vm.expectRevert(bytes(string.concat(
             "AccessControl: account ",
-            addressToString(owner),
+            addressToString(rolesAdmin),
             " is missing role ",
             roleToString(BLACKLISTER_ROLE)
         )));
@@ -77,9 +77,9 @@ contract Blacklistable_Test is Common_Test {
 
     function test_changingBlacklister_succeeds() external {
         vm.expectEmit(true, true, true, true);
-        emit RoleGranted(BLACKLISTER_ROLE, alice, owner);
+        emit RoleGranted(BLACKLISTER_ROLE, alice, rolesAdmin);
 
-        vm.prank(owner);
+        vm.prank(rolesAdmin);
         blacklistable.grantRole(BLACKLISTER_ROLE, alice);
         assertEq(blacklistable.hasRole(BLACKLISTER_ROLE, alice), true);
     }

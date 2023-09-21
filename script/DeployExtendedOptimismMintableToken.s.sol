@@ -12,7 +12,7 @@ contract DeployExtendedOptimismMintableToken is Script {
     bytes32 public constant BLACKLISTER_ROLE = keccak256("roles.blacklister");
 
     address public admin = vm.envAddress("ADMIN");
-    address public owner = vm.envAddress("OWNER");
+    address public rolesAdmin = vm.envAddress("DEFAULT_ROLE_ADMIN");
     address public pauser = vm.envAddress("PAUSER");
     address public blacklister = vm.envAddress("BLACKLISTER");
     address public remoteToken = vm.envAddress("REMOTE_TOKEN");
@@ -30,7 +30,7 @@ contract DeployExtendedOptimismMintableToken is Script {
         console.log("Symbol: %s", symbol);
         console.log("Pauser: %s", pauser);
         console.log("Blacklister: %s", blacklister);
-        console.log("Owner: %s", owner);
+        console.log("Roles Admin: %s", rolesAdmin);
         console.log("Decimals: %s", decimals);
 
         vm.broadcast();
@@ -91,11 +91,11 @@ contract DeployExtendedOptimismMintableToken is Script {
         require(extendedOptimismMintableTokenProxy.admin() == admin, "DeployExtendedOptimismMintableToken: proxy admin transfer failed");
 
         vm.broadcast(admin);
-        extendedOptimismMintableToken.initializeV2(name, owner);
+        extendedOptimismMintableToken.initializeV2(name, rolesAdmin);
 
-        vm.broadcast(owner);
+        vm.broadcast(rolesAdmin);
         extendedOptimismMintableToken.grantRole(PAUSER_ROLE, pauser);
-        vm.broadcast(owner);
+        vm.broadcast(rolesAdmin);
         extendedOptimismMintableToken.grantRole(BLACKLISTER_ROLE, blacklister);
         require(extendedOptimismMintableToken.hasRole(PAUSER_ROLE, pauser),
             "DeployExtendedOptimismMintableToken: pauser role is incorrect" 

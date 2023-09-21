@@ -5,7 +5,7 @@ export interface TestParams {
   getFiatToken: () => ExtendedOptimismMintableTokenInstance;
   getDomainSeparator: () => string;
   fiatTokenOwner: string;
-  roleOwnerBlacklisterPauser: string,
+  rolesAdminBlacklisterPauser: string,
   accounts: Truffle.Accounts;
 }
 

@@ -115,7 +115,7 @@ contract ExtendedOptimismMintableToken_Test is Common_Test {
 
     function test_initializeV2CalledTwice_reverts() external {
         vm.expectRevert("Initializable: contract is already initialized");
-        L2Token.initializeV2("L2 Token Name", owner);
+        L2Token.initializeV2("L2 Token Name", rolesAdmin);
     }
 
     function test_userSendingFundsToTokenContract_reverts() external {
@@ -147,10 +147,10 @@ contract ExtendedOptimismMintableToken_Test is Common_Test {
         L2Token.mint(alice, 100);
 
         vm.prank(address(alice));
-        L2Token.transfer(owner, 100);
+        L2Token.transfer(rolesAdmin, 100);
 
         assertEq(L2Token.balanceOf(alice), 0);
-        assertEq(L2Token.balanceOf(owner), 100);
+        assertEq(L2Token.balanceOf(rolesAdmin), 100);
     }
 
     function test_transferWhenPaused_reverts() external {
@@ -167,13 +167,13 @@ contract ExtendedOptimismMintableToken_Test is Common_Test {
         L2Token.mint(alice, 100);
 
         vm.prank(address(alice));
-        L2Token.approve(owner, 100);
+        L2Token.approve(rolesAdmin, 100);
 
-        vm.prank(address(owner));
-        L2Token.transferFrom(alice, owner, 100);
+        vm.prank(address(rolesAdmin));
+        L2Token.transferFrom(alice, rolesAdmin, 100);
 
         assertEq(L2Token.balanceOf(alice), 0);
-        assertEq(L2Token.balanceOf(owner), 100);
+        assertEq(L2Token.balanceOf(rolesAdmin), 100);
     }
 
     function test_transferFromWhenPaused_reverts() external {
@@ -182,7 +182,7 @@ contract ExtendedOptimismMintableToken_Test is Common_Test {
 
         vm.expectRevert("Pausable: paused");
         vm.prank(address(L2Bridge));
-        L2Token.transferFrom(owner, alice, 100);
+        L2Token.transferFrom(rolesAdmin, alice, 100);
     }
 
     function test_approve_succeeds() external {
@@ -198,7 +198,7 @@ contract ExtendedOptimismMintableToken_Test is Common_Test {
 
         vm.expectRevert("Pausable: paused");
         vm.prank(alice);
-        L2Token.approve(owner, 100);
+        L2Token.approve(rolesAdmin, 100);
     }
 
     function test_mintWhenBlacklisted_reverts() external {
@@ -229,7 +229,7 @@ contract ExtendedOptimismMintableToken_Test is Common_Test {
         
         vm.expectRevert("Blacklistable: account is blacklisted");
         vm.prank(alice);
-        L2Token.transfer(owner, 100);
+        L2Token.transfer(rolesAdmin, 100);
     }
 
     function test_transferFromWhenFromBlacklisted_reverts() external {
@@ -239,7 +239,7 @@ contract ExtendedOptimismMintableToken_Test is Common_Test {
         
         vm.expectRevert("Blacklistable: account is blacklisted");
         vm.prank(address(L2Bridge));
-        L2Token.transferFrom(alice, owner, 100);
+        L2Token.transferFrom(alice, rolesAdmin, 100);
     }
 
     function test_transferFromWhenToBlacklisted_reverts() external {
@@ -249,7 +249,7 @@ contract ExtendedOptimismMintableToken_Test is Common_Test {
         
         vm.expectRevert("Blacklistable: account is blacklisted");
         vm.prank(address(L2Bridge));
-        L2Token.transferFrom(owner, alice, 100);
+        L2Token.transferFrom(rolesAdmin, alice, 100);
     }
 
     function test_transferFromWhenMsgSenderBlacklisted_reverts() external {
@@ -259,7 +259,7 @@ contract ExtendedOptimismMintableToken_Test is Common_Test {
         
         vm.expectRevert("Blacklistable: account is blacklisted");
         vm.prank(alice);
-        L2Token.transferFrom(owner, pauser, 100);
+        L2Token.transferFrom(rolesAdmin, pauser, 100);
     }
 
     function test_approveWhenBlacklistedSpender_reverts() external {
@@ -269,7 +269,7 @@ contract ExtendedOptimismMintableToken_Test is Common_Test {
 
         // address being approved (spender) cannot be blacklisted
         vm.expectRevert("Blacklistable: account is blacklisted");
-        vm.prank(owner);
+        vm.prank(rolesAdmin);
         L2Token.approve(alice, 100);
     }
 
@@ -281,11 +281,13 @@ contract ExtendedOptimismMintableToken_Test is Common_Test {
         // msg.sender cannot approve if blacklisted
         vm.expectRevert("Blacklistable: account is blacklisted");
         vm.prank(alice);
-        L2Token.approve(owner, 100);
+        L2Token.approve(rolesAdmin, 100);
     }
 
     function test_renounceRole_reverts() external {
         vm.expectRevert("ExtendedOptimismMintableToken: Cannot renounce role");
-        L2Token.renounceRole(DEFAULT_ADMIN_ROLE, owner);
+        L2Token.renounceRole(DEFAULT_ADMIN_ROLE, rolesAdmin);
+        
+
     }
 }

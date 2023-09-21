@@ -22,7 +22,7 @@ contract DeployExtendedOptimismMintableToken_Test is Common_Test {
         vm.setEnv("REMOTE_TOKEN", vm.toString(address(99)));
         vm.setEnv("NAME", "Test");
         vm.setEnv("SYMBOL", "TST");
-        vm.setEnv("OWNER", vm.toString(owner));
+        vm.setEnv("DEFAULT_ROLE_ADMIN", vm.toString(rolesAdmin));
         vm.setEnv("DECIMALS", vm.toString(DECIMALS));
 
         deployer = new DeployExtendedOptimismMintableToken();
@@ -52,7 +52,7 @@ contract DeployExtendedOptimismMintableToken_Test is Common_Test {
         assertEq(L2Token.decimals(), DECIMALS);
         assertEq(L2Token.name(), vm.envString("NAME"));
         assertEq(L2Token.symbol(), vm.envString("SYMBOL"));
-        assertTrue(L2Token.hasRole(DEFAULT_ADMIN_ROLE, owner));
+        assertTrue(L2Token.hasRole(DEFAULT_ADMIN_ROLE, rolesAdmin));
         assertTrue(L2Token.hasRole(PAUSER_ROLE, pauser));
         assertTrue(L2Token.hasRole(BLACKLISTER_ROLE, blacklister));   
         assertFalse(L2Token.paused());

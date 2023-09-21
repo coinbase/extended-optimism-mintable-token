@@ -29,7 +29,7 @@ contract UpgradeToExtendedOptimismMintableToken_Test is Common_Test {
         vm.setEnv("NEW_IMPLEMENTATION_ADDRESS", vm.toString(address(L2TokenImpl)));
         vm.setEnv("PROXY_ADDRESS", vm.toString(address(L2Token)));
         vm.setEnv("ADMIN_ADDRESS", vm.toString(admin));
-        vm.setEnv("OWNER_ADDRESS", vm.toString(owner));
+        vm.setEnv("DEFAULT_ROLE_ADMIN_ADDRESS", vm.toString(rolesAdmin));
         vm.setEnv("PAUSER_ADDRESS", vm.toString(pauser));
         vm.setEnv("BLACKLISTER_ADDRESS", vm.toString(blacklister));
         
@@ -57,7 +57,7 @@ contract UpgradeToExtendedOptimismMintableToken_Test is Common_Test {
         assertEq(L2Token.decimals(), L2Token.decimals());
         assertEq(L2Token.name(), string(abi.encodePacked("L2-", L1Token.name())));
         assertEq(L2Token.symbol(), string(abi.encodePacked("L2-", L1Token.symbol())));
-        assertTrue(L2Token.hasRole(DEFAULT_ADMIN_ROLE, owner));
+        assertTrue(L2Token.hasRole(DEFAULT_ADMIN_ROLE, rolesAdmin));
         assertTrue(L2Token.hasRole(PAUSER_ROLE, pauser));
         assertTrue(L2Token.hasRole(BLACKLISTER_ROLE, blacklister));   
         assertFalse(L2Token.paused());

@@ -16,7 +16,7 @@ export function testTransferWithAuthorization({
   getFiatToken,
   getDomainSeparator,
   fiatTokenOwner,
-  roleOwnerBlacklisterPauser,
+  rolesAdminBlacklisterPauser,
   accounts,
 }: TestParams): void {
   describe("transferWithAuthorization", () => {
@@ -397,7 +397,7 @@ export function testTransferWithAuthorization({
         );
   
         // pause the contract
-        await fiatToken.pause({ from: roleOwnerBlacklisterPauser });
+        await fiatToken.pause({ from: rolesAdminBlacklisterPauser });
   
         // try to submit the authorization
         await expectRevert(
@@ -432,7 +432,7 @@ export function testTransferWithAuthorization({
         );
   
         // payer is blacklisted
-        await fiatToken.blacklist(from, { from: roleOwnerBlacklisterPauser });
+        await fiatToken.blacklist(from, { from: rolesAdminBlacklisterPauser });
   
         const submitTx = () =>
           fiatToken.transferWithAuthorization(
@@ -452,15 +452,15 @@ export function testTransferWithAuthorization({
         await expectRevert(submitTx(), "account is blacklisted");
   
         // payee is blacklisted
-        await fiatToken.unBlacklist(from, { from: roleOwnerBlacklisterPauser });
-        await fiatToken.blacklist(to, { from: roleOwnerBlacklisterPauser });
+        await fiatToken.unBlacklist(from, { from: rolesAdminBlacklisterPauser });
+        await fiatToken.blacklist(to, { from: rolesAdminBlacklisterPauser });
   
         // try to submit the authorization
         await expectRevert(submitTx(), "account is blacklisted");
 
         // sender is blacklisted
-        await fiatToken.unBlacklist(to, { from: roleOwnerBlacklisterPauser });
-        await fiatToken.blacklist(charlie, { from: roleOwnerBlacklisterPauser });
+        await fiatToken.unBlacklist(to, { from: rolesAdminBlacklisterPauser });
+        await fiatToken.blacklist(charlie, { from: rolesAdminBlacklisterPauser });
 
         // try to submit the authorization
         await expectRevert(submitTx(), "account is blacklisted");
