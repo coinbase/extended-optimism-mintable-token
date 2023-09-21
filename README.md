@@ -13,8 +13,13 @@ The `ExtendedOptimismMintableToken` inherits from the `UpgradeableOptimismMintab
 * A `decimals` variable was added to the constructor.
 * A storage gap was added to simplify state management in the event that state variables are added to `UpgradeableOptimismMintableERC20` in the future.
 
-### Commands
-* Run `make install-foundry` to install [`Foundry`](https://github.com/foundry-rs/foundry/commit/3b1129b5bc43ba22a9bcf4e4323c5a9df0023140). 
+### Commands and Setup
+Requirements:
+- Node >= v12
+- Yarn
+- The required versions of the Optimism repo and Foundry are specified in the .env file
+
+* Run `make install-foundry` to install [`Foundry` at this linked commit](https://github.com/foundry-rs/foundry/commit/3b1129b5bc43ba22a9bcf4e4323c5a9df0023140). 
 * Run `make build` to install dependencies.
 * Run `make tests` to run tests.
 * Run `make coverage` to get code coverage.
