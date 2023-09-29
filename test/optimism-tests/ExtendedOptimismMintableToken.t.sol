@@ -1,12 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.15;
 import { Common_Test } from "test/CommonTest.t.sol";
-import { ILegacyMintableERC20, IOptimismMintableERC20 } from "@eth-optimism-bedrock/contracts/universal/IOptimismMintableERC20.sol";
-import {
-     IEIP3009
-} from "src/eip-3009/IEIP3009.sol";
-import { IERC20Permit } from "@openzeppelin/contracts/token/ERC20/extensions/draft-IERC20Permit.sol";
 import { IERC165 } from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
+import { ILegacyMintableERC20, IOptimismMintableERC20 } from "@eth-optimism-bedrock/contracts/universal/IOptimismMintableERC20.sol";
+import { IEIP3009 } from "src/eip-3009/IEIP3009.sol";
+import { IERC20Permit } from "@openzeppelin/contracts/token/ERC20/extensions/draft-IERC20Permit.sol";
 import { ExtendedOptimismMintableToken } from "src/ExtendedOptimismMintableToken.sol";
 
 contract ExtendedOptimismMintableToken_Test is Common_Test {

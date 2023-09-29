@@ -6,6 +6,10 @@ import { UpgradeToExtendedOptimismMintableToken } from "script/UpgradeToExtended
 import { Proxy } from "@eth-optimism-bedrock/contracts/universal/Proxy.sol";
 import { ExtendedOptimismMintableToken } from "src/ExtendedOptimismMintableToken.sol";
 import { UpgradeableOptimismMintableERC20 } from "src/UpgradeableOptimismMintableERC20.sol";
+import { IERC165 } from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
+import { ILegacyMintableERC20, IOptimismMintableERC20 } from "@eth-optimism-bedrock/contracts/universal/IOptimismMintableERC20.sol";
+import { IEIP3009 } from "src/eip-3009/IEIP3009.sol";
+import { IERC20Permit } from "@openzeppelin/contracts/token/ERC20/extensions/draft-IERC20Permit.sol";
 
 contract UpgradeToExtendedOptimismMintableToken_Test is Common_Test {    
     UpgradeToExtendedOptimismMintableToken upgraderImpl;
@@ -36,7 +40,13 @@ contract UpgradeToExtendedOptimismMintableToken_Test is Common_Test {
         upgraderImpl = new UpgradeToExtendedOptimismMintableToken();
     }
 
-    function test_upgradeToExtendedOptimismMintableToken_sucess() external {
+    function test_upgradeToExtendedOptimismMintableToken_success() external {
+        address bridgePriorToUpgrade = L2Token.BRIDGE();
+        address remoteTokenPriorToUpgrade = L2Token.REMOTE_TOKEN();
+        string memory namePriorToUpgrade = L2Token.name();
+        string memory symbolPriorToUpgrade = L2Token.symbol();
+        uint8 decimalsPriorToUpgrade = L2Token.decimals();
+
         upgraderImpl.run();
 
         // Proxy assertions
@@ -52,14 +62,23 @@ contract UpgradeToExtendedOptimismMintableToken_Test is Common_Test {
              0
         )));
         assertEq(initializedVersion, 2);
-        assertEq(L2Token.BRIDGE(), L2Token.BRIDGE());
-        assertEq(L2Token.REMOTE_TOKEN(), L2Token.REMOTE_TOKEN());
-        assertEq(L2Token.decimals(), L2Token.decimals());
-        assertEq(L2Token.name(), string(abi.encodePacked("L2-", L1Token.name())));
-        assertEq(L2Token.symbol(), string(abi.encodePacked("L2-", L1Token.symbol())));
+        assertEq(L2Token.BRIDGE(), bridgePriorToUpgrade);
+        assertEq(L2Token.bridge(), bridgePriorToUpgrade);
+        assertEq(L2Token.l2Bridge(), bridgePriorToUpgrade);
+        assertEq(L2Token.REMOTE_TOKEN(), remoteTokenPriorToUpgrade);
+        assertEq(L2Token.remoteToken(), remoteTokenPriorToUpgrade);
+        assertEq(L2Token.l1Token(), remoteTokenPriorToUpgrade);
+        assertEq(L2Token.decimals(), decimalsPriorToUpgrade);
+        assertEq(L2Token.name(), namePriorToUpgrade);
+        assertEq(L2Token.symbol(), symbolPriorToUpgrade);
         assertTrue(L2Token.hasRole(DEFAULT_ADMIN_ROLE, rolesAdmin));
         assertTrue(L2Token.hasRole(PAUSER_ROLE, pauser));
         assertTrue(L2Token.hasRole(BLACKLISTER_ROLE, blacklister));   
         assertFalse(L2Token.paused());
+        assertTrue(L2Token.supportsInterface(type(IERC165).interfaceId));
+        assertTrue(L2Token.supportsInterface(type(ILegacyMintableERC20).interfaceId));
+        assertTrue(L2Token.supportsInterface(type(IOptimismMintableERC20).interfaceId));
+        assertTrue(L2Token.supportsInterface(type(IEIP3009).interfaceId));
+        assertTrue(L2Token.supportsInterface(type(IERC20Permit).interfaceId));
     }
 }

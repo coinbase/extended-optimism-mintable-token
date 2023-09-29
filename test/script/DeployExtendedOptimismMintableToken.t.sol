@@ -6,6 +6,10 @@ import { Proxy } from "@eth-optimism-bedrock/contracts/universal/Proxy.sol";
 import { ExtendedOptimismMintableToken } from "src/ExtendedOptimismMintableToken.sol";
 import { DeployExtendedOptimismMintableToken } from "script/DeployExtendedOptimismMintableToken.s.sol";
 import { Predeploys } from "@eth-optimism-bedrock/contracts/libraries/Predeploys.sol";
+import { IERC165 } from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
+import { ILegacyMintableERC20, IOptimismMintableERC20 } from "@eth-optimism-bedrock/contracts/universal/IOptimismMintableERC20.sol";
+import { IEIP3009 } from "src/eip-3009/IEIP3009.sol";
+import { IERC20Permit } from "@openzeppelin/contracts/token/ERC20/extensions/draft-IERC20Permit.sol";
 
 contract DeployExtendedOptimismMintableToken_Test is Common_Test {    
     DeployExtendedOptimismMintableToken deployer;
@@ -28,7 +32,7 @@ contract DeployExtendedOptimismMintableToken_Test is Common_Test {
         deployer = new DeployExtendedOptimismMintableToken();
     }
 
-    function test_deployExtendedOptimismMintableToken_sucess() external {
+    function test_deployExtendedOptimismMintableToken_success() external {
         L2Token = ExtendedOptimismMintableToken(deployer.run());
 
         // Proxy assertions
@@ -56,6 +60,10 @@ contract DeployExtendedOptimismMintableToken_Test is Common_Test {
         assertTrue(L2Token.hasRole(PAUSER_ROLE, pauser));
         assertTrue(L2Token.hasRole(BLACKLISTER_ROLE, blacklister));   
         assertFalse(L2Token.paused());
-
+        assertTrue(L2Token.supportsInterface(type(IERC165).interfaceId));
+        assertTrue(L2Token.supportsInterface(type(ILegacyMintableERC20).interfaceId));
+        assertTrue(L2Token.supportsInterface(type(IOptimismMintableERC20).interfaceId));
+        assertTrue(L2Token.supportsInterface(type(IEIP3009).interfaceId));
+        assertTrue(L2Token.supportsInterface(type(IERC20Permit).interfaceId));
     }
 }
