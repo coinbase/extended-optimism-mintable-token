@@ -266,5 +266,47 @@ export function testCancelAuthorization({
           "paused"
         );
       });
+
+      it("reverts if the sender is blacklisted", async () => {
+        // create a cancellation
+        const { v, r, s } = signCancelAuthorization(
+          alice.address,
+          nonce,
+          domainSeparator,
+          alice.key
+        );
+  
+        // blacklist the sender
+        await fiatToken.blacklist(charlie, { from: rolesAdminBlacklisterPauser });
+  
+        // try to submit the cancellation
+        await expectRevert(
+          fiatToken.cancelAuthorization(alice.address, nonce, v, r, s, {
+            from: charlie,
+          }),
+          "account is blacklisted"
+        );
+      });
+
+      it("reverts if the authorizer is blacklisted", async () => {
+        // create a cancellation
+        const { v, r, s } = signCancelAuthorization(
+          alice.address,
+          nonce,
+          domainSeparator,
+          alice.key
+        );
+  
+        // blacklist the authorizer
+        await fiatToken.blacklist(alice.address, { from: rolesAdminBlacklisterPauser });
+  
+        // try to submit the cancellation
+        await expectRevert(
+          fiatToken.cancelAuthorization(alice.address, nonce, v, r, s, {
+            from: charlie,
+          }),
+          "account is blacklisted"
+        );
+      });
   });
 }
