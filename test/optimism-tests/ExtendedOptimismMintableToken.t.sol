@@ -291,6 +291,7 @@ contract ExtendedOptimismMintableToken_Test is Common_Test {
     function test_changeRolesAdmin_succeeds() external {
         vm.prank(rolesAdmin);
         L2Token.changeRolesAdmin(alice);
+        assertEq(L2Token.hasRole(DEFAULT_ADMIN_ROLE, rolesAdmin), false);
         assertEq(L2Token.hasRole(DEFAULT_ADMIN_ROLE, alice), true);
     }
     

@@ -386,6 +386,7 @@ contract ExtendedOptimismMintableToken is Semver, UpgradeableOptimismMintableERC
     */
     function changeRolesAdmin(address newRolesAdmin) public onlyRole(DEFAULT_ADMIN_ROLE) {
         _grantRole(DEFAULT_ADMIN_ROLE, newRolesAdmin);
+        _revokeRole(DEFAULT_ADMIN_ROLE, _msgSender());
     }
 
     /**
