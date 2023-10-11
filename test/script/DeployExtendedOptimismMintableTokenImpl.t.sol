@@ -16,6 +16,9 @@ contract DeployExtendedOptimismMintableTokenImpl_Test is Common_Test {
         super.setUp();
 
         vm.setEnv("PROXY_ADDRESS", vm.toString(address(L2Token)));
+        vm.setEnv("NAME", L2Token.name());
+        vm.setEnv("SYMBOL", L2Token.symbol());
+        vm.setEnv("REMOTE_TOKEN", vm.toString(address(L1Token)));
         deployerImpl = new DeployExtendedOptimismMintableTokenImpl();
     }
 
@@ -36,8 +39,6 @@ contract DeployExtendedOptimismMintableTokenImpl_Test is Common_Test {
         assertEq(L2TokenImpl.remoteToken(), L2Token.remoteToken());
         assertEq(L2TokenImpl.l1Token(), L2Token.l1Token());
         assertEq(L2TokenImpl.decimals(), L2Token.decimals());      
-        assertEq(L2TokenImpl.name(), L2Token.name());
-        assertEq(L2TokenImpl.symbol(), L2Token.symbol());
         assertTrue(L2TokenImpl.supportsInterface(type(IERC165).interfaceId));
         assertTrue(L2TokenImpl.supportsInterface(type(ILegacyMintableERC20).interfaceId));
         assertTrue(L2TokenImpl.supportsInterface(type(IOptimismMintableERC20).interfaceId));

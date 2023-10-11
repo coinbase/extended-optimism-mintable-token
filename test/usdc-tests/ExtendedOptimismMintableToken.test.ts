@@ -20,17 +20,18 @@ contract("ExtendedOptimismMintableToken",  (accounts) => {
 
     beforeEach(async () => {
         let initializeCall = web3.eth.abi.encodeFunctionCall({
-            name: "initializeV2",
+            name: "initialize",
             type: "function",
             inputs: [{
                 type: "string",
-                name: "name"
+                name: "_name"
             },
             {
-                type: "address",
-                name: "_rolesAdmin"
-            }]
-        }, ["USD Coin", rolesAdminBlacklisterPauser]);
+                type: "string",
+                name: "_symbol"
+            }
+        ]
+        }, ["USD Coin", "USDC"]);
 
         extendedOptimismMintableTokenImpl = await ExtendedOptimismMintableToken.new(
             bridgeAddress,
@@ -46,6 +47,12 @@ contract("ExtendedOptimismMintableToken",  (accounts) => {
         );
 
         extendedOptimismMintableToken = await ExtendedOptimismMintableToken.at(extendedOptimismMintableTokenProxy.address);
+
+        await extendedOptimismMintableToken.initializeV2(
+            "USD Coin", 
+            rolesAdminBlacklisterPauser, 
+            { from: admin }
+        );
 
         // grant roles
         const PAUSER_ROLE = web3.utils.keccak256("roles.pauser");

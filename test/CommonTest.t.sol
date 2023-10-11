@@ -64,18 +64,21 @@ contract Common_Test is Test {
 
         ExtendedOptimismMintableTokenProxy = new Proxy(admin);
 
-        bytes memory initializeCall = abi.encodeCall(
-            ExtendedOptimismMintableToken.initializeV2, 
-            (
-                string(abi.encodePacked("L2-", L1Token.name())),
-                rolesAdmin
-            )
+        string memory name = string(abi.encodePacked("L2-", L1Token.name()));
+
+        bytes memory initializeCall = abi.encodeWithSelector(
+            L2TokenImpl.initialize.selector,
+            name,
+            string(abi.encodePacked("L2-", L1Token.symbol()))
         );
 
         vm.prank(admin);
         ExtendedOptimismMintableTokenProxy.upgradeToAndCall(address(L2TokenImpl), initializeCall);
 
         L2Token = ExtendedOptimismMintableToken(address(ExtendedOptimismMintableTokenProxy));
+        
+        vm.prank(admin);
+        L2Token.initializeV2(name, rolesAdmin);
 
         // Set up roles
         vm.prank(rolesAdmin);
