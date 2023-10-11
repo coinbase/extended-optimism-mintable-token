@@ -40,6 +40,12 @@ Requirements:
     * `DEFAULT_ROLE_ADMIN` - the address for the role which can re-assign itself and the `PAUSER` and `BLACKLISTER` roles. This role can NOT change the `ADMIN` address, which administrates the proxy contract.
 * Run `make deploy` to simulate Base Mainnet token deployment locally.
 
+These scripts can be found in the `script/` directory:
+- [`DeployExtendedOptimismMintableToken.s.sol`](script/DeployExtendedOptimismMintableToken.s.sol) to deploy and configure a totally new `ExtendedOptimismMintableToken` implementation and corresponding proxy contracts
+- [`UpgradeToExtendedOptimismMintableToken.s.sol.s.sol`](script/UpgradeToExtendedOptimismMintableToken.s.sol) to upgrade an already deployed `UpgradeableOptimismMintableERC20` to an `ExtendedOptimismMintableToken` 
+- [`DeployExtendedOptimismMintableTokenImpl.s.sol`](script/DeployExtendedOptimismMintableTokenImpl.s.sol) to deploy and configure an `ExtendedOptimismMintableToken` implementation contract
+
+These scripts are tested in [`test/script`](test/script) directory.
 
 ## Functionality 
 
