@@ -116,6 +116,11 @@ contract ExtendedOptimismMintableToken_Test is Common_Test {
         L2Token.initializeV2("L2 Token Name", rolesAdmin);
     }
 
+    function test_initializeCalledTwice_reverts() external {
+        vm.expectRevert("Initializable: contract is already initialized");
+        L2Token.initialize("L2 Token Name", "SYM");
+    }
+
     function test_userSendingFundsToTokenContract_reverts() external {
         hoax(alice, 2 ether);
         vm.expectRevert("Blacklistable: account is blacklisted");
