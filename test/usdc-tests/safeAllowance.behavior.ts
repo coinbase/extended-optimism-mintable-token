@@ -7,7 +7,7 @@ import { MAX_UINT256 } from "./helperUtils/constants";
 
 export function hasSafeAllowance(
   getFiatToken: () => ExtendedOptimismMintableTokenInstance,
-  roleOwnerBlacklisterPauser: string,
+  rolesAdminBlacklisterPauser: string,
   accounts: Truffle.Accounts
 ): void {
   describe("safe allowance", () => {
@@ -70,7 +70,7 @@ export function hasSafeAllowance(
 
         it("reverts if the owner is blacklisted", async () => {
             // owner is blacklisted
-            await fiatToken.blacklist(alice, { from: roleOwnerBlacklisterPauser });
+            await fiatToken.blacklist(alice, { from: rolesAdminBlacklisterPauser });
 
             // try to increase allowance
             await expectRevert(
@@ -81,7 +81,7 @@ export function hasSafeAllowance(
 
         it("reverts if the spender is blacklisted", async () => {
             // owner is blacklisted
-            await fiatToken.blacklist(alice, { from: roleOwnerBlacklisterPauser });
+            await fiatToken.blacklist(alice, { from: rolesAdminBlacklisterPauser });
 
             // try to increase allowance
             await expectRevert(
@@ -151,7 +151,7 @@ export function hasSafeAllowance(
 
       it("reverts if the owner is blacklisted", async () => {
         // owner is blacklisted
-        await fiatToken.blacklist(alice, { from: roleOwnerBlacklisterPauser });
+        await fiatToken.blacklist(alice, { from: rolesAdminBlacklisterPauser });
 
         // try to decrease allowance
         await expectRevert(
@@ -162,7 +162,7 @@ export function hasSafeAllowance(
 
       it("reverts if the spender is blacklisted", async () => {
         // owner is blacklisted
-        await fiatToken.blacklist(alice, { from: roleOwnerBlacklisterPauser });
+        await fiatToken.blacklist(alice, { from: rolesAdminBlacklisterPauser });
 
         // try to decrease allowance
         await expectRevert(

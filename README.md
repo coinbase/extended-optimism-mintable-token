@@ -1,7 +1,7 @@
 # ExtendedOptimismMintableToken
 This repository implements the [`ExtendedOptimismMintableToken.sol`](./src/ExtendedOptimismMintableToken.sol). The Extended Optimism Mintable Token contract is an ERC-20 compatible token, 
 and is based on Optimism's [`OptimismMintableERC20`](https://github.com/ethereum-optimism/optimism/blob/0f07717bf06c2278bbccc9c62cad30731beeb322/packages/contracts-bedrock/contracts/universal/OptimismMintableERC20.sol) contract. It allows minting/burning of tokens by a specified bridge, pausing all activity, freezing of individual
-addresses ("blacklisting"), and a way to upgrade the contract so that bugs can be fixed or features added. It also supports gas abstraction functionality by implementing [EIP-3009](https://eips.ethereum.org/EIPS/eip-3009) and using OpenZeppelin's upgradeable [EIP-2612](https://eips.ethereum.org/EIPS/eip-2612) implementation. We describe this functionality further under [Functionality](#functionality). Finally, it uses OpenZeppelin's [AccessControl](https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable/blob/v4.7.3/contracts/access/AccessControlUpgradeable.sol) pattern to use role-based access control for the pausing and blacklisting capabilities, designating a role to manage each, along with an `owner` role to manage those roles (detailed further below).
+addresses ("blacklisting"), and a way to upgrade the contract so that bugs can be fixed or features added. It also supports gas abstraction functionality by implementing [EIP-3009](https://eips.ethereum.org/EIPS/eip-3009) and using OpenZeppelin's upgradeable [EIP-2612](https://eips.ethereum.org/EIPS/eip-2612) implementation. We describe this functionality further under [Functionality](#functionality). Finally, it uses OpenZeppelin's [AccessControl](https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable/blob/v4.7.3/contracts/access/AccessControlUpgradeable.sol) pattern to use role-based access control for the pausing and blacklisting capabilities, designating a role to manage each, along with a `DEFAULT_ROLE_ADMIN`  role to manage those roles (detailed further below).
 
 ### UpgradeableOptimismMintableERC20
 The `ExtendedOptimismMintableToken` inherits from the `UpgradeableOptimismMintableERC20` contract, which itself is based off of Optimism's [OptimismMintableERC20](https://github.com/ethereum-optimism/optimism/blob/0f07717bf06c2278bbccc9c62cad30731beeb322/packages/contracts-bedrock/contracts/universal/OptimismMintableERC20.sol) contract. The `UpgradeableOptimismMintableERC20` contains the following changes from Optimism's `OptimismMintableERC20`:
@@ -13,28 +13,39 @@ The `ExtendedOptimismMintableToken` inherits from the `UpgradeableOptimismMintab
 * A `decimals` variable was added to the constructor.
 * A storage gap was added to simplify state management in the event that state variables are added to `UpgradeableOptimismMintableERC20` in the future.
 
-### Commands
-* Run `make install-foundry` to install [`Foundry`](https://github.com/foundry-rs/foundry/commit/3b1129b5bc43ba22a9bcf4e4323c5a9df0023140). 
+### Commands and Setup
+Requirements:
+- Node >= v12
+- Yarn
+- The required versions of the Optimism repo and Foundry are specified in the .env file
+
+* Run `make install-foundry` to install [`Foundry` at this linked commit](https://github.com/foundry-rs/foundry/commit/3b1129b5bc43ba22a9bcf4e4323c5a9df0023140). 
 * Run `make build` to install dependencies.
 * Run `make tests` to run tests.
 * Run `make coverage` to get code coverage.
 * Set the required .env variables and run `make deploy` to simulate Base Mainnet token deployment locally.
 
 ### Deployment
-* **Note**: To initialize the `ExtendedOptimismMintableToken` contract, you only need to call its `initializeV2` method. You do *not* need to call the `UpgradeableOptimismMintableERC20`'s `initialize` method, as the `initialize` method's functionality is already included in the `initializeV2` method.
+* **Note**: To initialize the `ExtendedOptimismMintableToken` contract, you need to call the `initialize` method inherited from `UpgradeableOptimismMintableERC20`, and then  `ExtendedOptimismMintableToken`'s `initializeV2` method.
 * Configure the following variables in `.env`:
     * `DEPLOYER` - the address deploying the token implementation and proxy contract.
-    * `ADMIN` - the address that will end up being the owner of the token's proxy contract.
+    * `ADMIN` - the address to be the `admin` of the token's proxy contract. Not to be confused with the `DEFAULT_ROLE_ADMIN` env variable and role specified below, which administrates the `blacklister` and `pauser` roles along with itself.
     * `L2_BRIDGE` - the address of the [`L2StandardBridge`](https://github.com/ethereum-optimism/optimism/blob/0f07717bf06c2278bbccc9c62cad30731beeb322/packages/contracts-bedrock/contracts/L2/L2StandardBridge.sol) contract which is able to mint and burn the token being deployed.
     * `REMOTE_TOKEN` - the L1 address of the L2 bridged token being deployed.
-    * `NAME` - the `ERC20` [`name`](https://eips.ethereum.org/EIPS/eip-20#name) of the bridged token.
+    * `NAME` - the `ERC20` [`name`](https://eips.ethereum.org/EIPS/eip-20#name) of the bridged token. This is also used for the `EIP-712` domain separator [`name`](https://eips.ethereum.org/EIPS/eip-712#definition-of-domainseparator).
     * `SYMBOL` - the `ERC20` [`symbol`](https://eips.ethereum.org/EIPS/eip-20#symbol) of the bridged token.
     * `DECIMALS` - the `ERC20` [`decimals`](https://eips.ethereum.org/EIPS/eip-20#decimals) of the bridged token.
     * `PAUSER` - the only address for the role that can pause the contract, which prevents all transfers, minting, and burning
     * `BLACKLISTER` - the only address for the role that can call `blacklist(address)`, which prevents all transfers to or from that address, and `unBlacklist(address)`
-    * `OWNER` - the address that can re-assign any of the roles (i.e. `PAUSER`, `BLACKLISTER`) except for `ADMIN`
+    * `DEFAULT_ROLE_ADMIN` - the address for the role which can re-assign itself and the `PAUSER` and `BLACKLISTER` roles. This role can NOT change the `ADMIN` address, which administrates the proxy contract.
 * Run `make deploy` to simulate Base Mainnet token deployment locally.
 
+These scripts can be found in the `script/` directory:
+- [`DeployExtendedOptimismMintableToken.s.sol`](script/DeployExtendedOptimismMintableToken.s.sol) to deploy and configure a totally new `ExtendedOptimismMintableToken` implementation and corresponding proxy contracts
+- [`UpgradeToExtendedOptimismMintableToken.s.sol.s.sol`](script/UpgradeToExtendedOptimismMintableToken.s.sol) to upgrade an already deployed `UpgradeableOptimismMintableERC20` to an `ExtendedOptimismMintableToken` 
+- [`DeployExtendedOptimismMintableTokenImpl.s.sol`](script/DeployExtendedOptimismMintableTokenImpl.s.sol) to deploy and configure an `ExtendedOptimismMintableToken` implementation contract
+
+These scripts are tested in [`test/script`](test/script) directory.
 
 ## Functionality 
 
@@ -136,16 +147,21 @@ logic of any deployed tokens seamlessly.
 
 - Coinbase will upgrade the token via a call to `upgradeTo` or `upgradeToAndCall`
   if initialization is required for the new version.
-- Only the `admin` role may call `upgradeTo` or `upgradeToAndCall`.
+- Only the Proxy contract's `admin` role may call `upgradeTo` or `upgradeToAndCall`.
 - For upgrades, if an initializer method is used, set a constant version in the `reinitializer` modifier that is incremented from the previous upgrade's version. This prevents the initializer method from being called multiple times. Failing to follow this guidance could introduce vulnerabilities. Additionally, note subsequently introduced `reinitializer` methods are not meant to re-execute the same initialization code used in previous versions.
 
 ### Reassigning Roles
 
-The roles (`blacklister`, `pauser`) outlined above may be reassigned. The `owner` role has the ability to
-reassign all roles (including itself) except for the `admin` role. The `BRIDGE` address is immutable, in keeping with the `OptimismMintableERC20` contract.
+The roles (`blacklister`, `pauser`) described above may be reassigned. The `DEFAULT_ROLE_ADMIN` role has the ability to
+reassign itself and the `blacklister` and `pauser` roles. It cannot re-assign the Proxy contract's `admin` role. The `BRIDGE` address is immutable, in keeping with the `OptimismMintableERC20` contract.
 
-- `transferOwnership` updates the `owner` role to a new address.
-- `transferOwnership` may only be called by the `owner` role.
+- `changeRolesAdmin` updates the `DEFAULT_ROLE_ADMIN` role to a new address.
+- `changeRolesAdmin` may only be called by the `DEFAULT_ROLE_ADMIN` role.
+
+### Convention for function parameter styling
+In general, function parameters should be named, are not prefixed with underscores and are written in camelCase.
+
+We have deviated from this guideline in the following cases. Where referencing code from other codebases, we have followed their parameter styling convention (ex. prefixing parameters with an underscore in the `mint` and `burn` methods as the Optimism repo does for their OptimismMintableERC20 contract, OpenZeppelin ERC20 methods, etc). For consistency, in methods like `initializeV2` where one parameter (`_name`) is prefixed with an underscore (in this case to differentiate it from the storage variable it's meant to fill), we prefix the other parameters for the same function with an underscore. Parameter names in `renounceRole` on `ExtendedOptimismMintableToken` are not named as they would be unused - in this case, the parameters are included to override the same-named method from the `AccessControlUpgradable` contract. 
 
 ### Optimism Citation
 This work uses software from The Optimism Monorepo:
@@ -160,6 +176,7 @@ repository: https://github.com/ethereum-optimism/optimism
 license: MIT
 ```
 
+### CENTRE code references
 Where this code indicates it uses code from the CENTRE codebase, it references
 this commit [https://github.com/centrehq/centre-tokens/commit/0d3cab14ebd133a83fc834dbd48d0468bdf0b391](https://github.com/centrehq/centre-tokens/commit/0d3cab14ebd133a83fc834dbd48d0468bdf0b391)
 

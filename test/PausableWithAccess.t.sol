@@ -15,13 +15,20 @@ contract PausableWithAccess_Test is Common_Test {
     function setUp() public virtual override {
         super.setUp();
 
-        pausableWithAccess = new PausableWithAccessFake(owner);
+        pausableWithAccess = new PausableWithAccessFake(rolesAdmin);
 
-        vm.prank(owner);
+        vm.prank(rolesAdmin);
         pausableWithAccess.grantRole(PAUSER_ROLE, pauser);
     }
 
     // ********* PausableWithAccess.sol functionality tests *********
+     function test_pauserRoleIsCorrectHash_succeeds() external {
+        assertEq(
+            pausableWithAccess.PAUSER_ROLE(),
+            keccak256("roles.pauser")
+        );
+     }
+
     function test_pausedAfterPausing_succeeds() public {
         vm.expectEmit(true, true, true, true, address(pausableWithAccess));
         emit Paused(pauser);
@@ -50,10 +57,10 @@ contract PausableWithAccess_Test is Common_Test {
     }
 
     function test_nonPauserPausing_reverts() external{
-        vm.prank(owner);
+        vm.prank(rolesAdmin);
         vm.expectRevert(bytes(string.concat(
             "AccessControl: account ",
-            addressToString(owner),
+            addressToString(rolesAdmin),
             " is missing role ",
             roleToString(PAUSER_ROLE)
         )));
@@ -64,10 +71,10 @@ contract PausableWithAccess_Test is Common_Test {
         vm.prank(pauser);
         pausableWithAccess.pause();
 
-        vm.prank(owner);
+        vm.prank(rolesAdmin);
         vm.expectRevert(bytes(string.concat(
             "AccessControl: account ",
-            addressToString(owner),
+            addressToString(rolesAdmin),
             " is missing role ",
             roleToString(PAUSER_ROLE)
         )));
@@ -80,9 +87,9 @@ contract PausableWithAccess_Test is Common_Test {
 
     function test_changingPauser_succeeds() external {
         vm.expectEmit(true, true, true, true);
-        emit RoleGranted(PAUSER_ROLE, alice, owner);
+        emit RoleGranted(PAUSER_ROLE, alice, rolesAdmin);
 
-        vm.prank(owner);
+        vm.prank(rolesAdmin);
         pausableWithAccess.grantRole(PAUSER_ROLE, alice);
         assertEq(pausableWithAccess.hasRole(PAUSER_ROLE, alice), true);
     }

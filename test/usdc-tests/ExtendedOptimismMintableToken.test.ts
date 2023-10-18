@@ -11,7 +11,7 @@ const Proxy = artifacts.require("Proxy");
 contract("ExtendedOptimismMintableToken",  (accounts) => {
     const admin = accounts[8];
     const bridgeAddress = accounts[9];
-    const roleOwnerBlacklisterPauser = accounts[7];
+    const rolesAdminBlacklisterPauser = accounts[7];
     const remoteTokenAddress = "0xd5e099c71b797516c10ed0f0d895f429c2781142"; // random address
     let extendedOptimismMintableTokenProxy: ProxyInstance;
     let extendedOptimismMintableTokenImpl: ExtendedOptimismMintableTokenInstance;
@@ -20,21 +20,18 @@ contract("ExtendedOptimismMintableToken",  (accounts) => {
 
     beforeEach(async () => {
         let initializeCall = web3.eth.abi.encodeFunctionCall({
-            name: "initializeV2",
+            name: "initialize",
             type: "function",
             inputs: [{
                 type: "string",
-                name: "name"
+                name: "_name"
             },
             {
                 type: "string",
-                name: "symbol"
-            },
-            {
-                type: "address",
-                name: "_owner"
-            }]
-        }, ["USD Coin", "USDC.o", roleOwnerBlacklisterPauser]);
+                name: "_symbol"
+            }
+        ]
+        }, ["USD Coin", "USDC"]);
 
         extendedOptimismMintableTokenImpl = await ExtendedOptimismMintableToken.new(
             bridgeAddress,
@@ -51,24 +48,30 @@ contract("ExtendedOptimismMintableToken",  (accounts) => {
 
         extendedOptimismMintableToken = await ExtendedOptimismMintableToken.at(extendedOptimismMintableTokenProxy.address);
 
+        await extendedOptimismMintableToken.initializeV2(
+            "USD Coin", 
+            rolesAdminBlacklisterPauser, 
+            { from: admin }
+        );
+
         // grant roles
         const PAUSER_ROLE = web3.utils.keccak256("roles.pauser");
         const BLACKLISTER_ROLE = web3.utils.keccak256("roles.blacklister");
 
         await extendedOptimismMintableToken.grantRole(
             PAUSER_ROLE,
-            roleOwnerBlacklisterPauser,
-            { from: roleOwnerBlacklisterPauser }
+            rolesAdminBlacklisterPauser,
+            { from: rolesAdminBlacklisterPauser }
         )
         await extendedOptimismMintableToken.grantRole(
             BLACKLISTER_ROLE,
-            roleOwnerBlacklisterPauser,
-            { from: roleOwnerBlacklisterPauser }
+            rolesAdminBlacklisterPauser,
+            { from: rolesAdminBlacklisterPauser }
         )
 
         domainSeparator = makeDomainSeparator(
             "USD Coin",
-            "2",
+            "1",
             31337, // hardhat chain id
             extendedOptimismMintableToken.address
         );
@@ -80,13 +83,13 @@ contract("ExtendedOptimismMintableToken",  (accounts) => {
         () => extendedOptimismMintableToken,
         () => domainSeparator,
         bridgeAddress,
-        roleOwnerBlacklisterPauser,
+        rolesAdminBlacklisterPauser,
         accounts
     );
 
     hasSafeAllowance(
         () => extendedOptimismMintableToken,
-        roleOwnerBlacklisterPauser,
+        rolesAdminBlacklisterPauser,
         accounts
     )
 

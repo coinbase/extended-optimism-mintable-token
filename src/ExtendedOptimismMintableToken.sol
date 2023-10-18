@@ -43,20 +43,19 @@ contract ExtendedOptimismMintableToken is Semver, UpgradeableOptimismMintableERC
 
     /**
      * @notice Initializer method 
-     * @param _name         ERC20 name.
-     * @param _symbol       ERC20 symbol.
-     * @param _owner        Address designated for the owner role.
+     * @param _name         EIP-712 name. Suggested convention is to use the ERC20 name.
+     * @param _rolesAdmin        Address designated for the rolesAdmin role.
      */
     function initializeV2(
         string memory _name,
-        string memory _symbol,
-        address _owner
+        address _rolesAdmin
     ) external virtual reinitializer(2) {
-        ERC20Upgradeable.__ERC20_init(_name, _symbol);
         EIP712Upgradeable.__EIP712_init(_name, "1");
-        __AccessControl_init();
-        _grantRole(DEFAULT_ADMIN_ROLE, _owner);
+        _grantRole(DEFAULT_ADMIN_ROLE, _rolesAdmin);
         __Pausable_init();
+        // No-op initializations are called so as to make all inherited contract's initialization explicit
+        __AccessControl_init();
+        blacklisted[address(this)] = true;
     }
 
     /**
@@ -118,7 +117,14 @@ contract ExtendedOptimismMintableToken is Semver, UpgradeableOptimismMintableERC
         uint8 v,
         bytes32 r,
         bytes32 s
-    ) external virtual whenNotPaused notBlacklisted(from) notBlacklisted(to) {
+    ) 
+        external
+        virtual
+        whenNotPaused
+        notBlacklisted(_msgSender())
+        notBlacklisted(from)
+        notBlacklisted(to)
+    {
         _transferWithAuthorization(from, to, value, validAfter, validBefore, nonce, v, r, s); 
     }
 
@@ -174,7 +180,7 @@ contract ExtendedOptimismMintableToken is Semver, UpgradeableOptimismMintableERC
         uint8 v,
         bytes32 r,
         bytes32 s
-    ) external virtual whenNotPaused {
+    ) external virtual whenNotPaused notBlacklisted(_msgSender()) notBlacklisted(authorizer) {
         _cancelAuthorization(authorizer, nonce, v, r, s);
     }
 
@@ -207,6 +213,7 @@ contract ExtendedOptimismMintableToken is Semver, UpgradeableOptimismMintableERC
         virtual
         override
         whenNotPaused
+        notBlacklisted(_msgSender())
         notBlacklisted(owner)
         notBlacklisted(spender)
     {
@@ -371,6 +378,15 @@ contract ExtendedOptimismMintableToken is Semver, UpgradeableOptimismMintableERC
      */
     function renounceRole(bytes32, address) public pure virtual override {
         revert("ExtendedOptimismMintableToken: Cannot renounce role");
+    }
+
+    /**
+    * @dev Allows the current rolesAdmin to transfer control of the roles to a new rolesAdmin.
+    * @param newRolesAdmin The address to transfer the role administration capability (i.e. role of `DEFAULT_ADMIN_ROLE`) to.
+    */
+    function changeRolesAdmin(address newRolesAdmin) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        grantRole(DEFAULT_ADMIN_ROLE, newRolesAdmin);
+        revokeRole(DEFAULT_ADMIN_ROLE, _msgSender());
     }
 
     /**

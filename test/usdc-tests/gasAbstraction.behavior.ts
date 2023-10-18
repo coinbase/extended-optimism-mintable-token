@@ -9,7 +9,7 @@ export function hasGasAbstraction(
   getFiatToken: () => ExtendedOptimismMintableTokenInstance,
   getDomainSeparator: () => string,
   fiatTokenOwner: string,
-  roleOwnerBlacklisterPauser: string,
+  rolesAdminBlacklisterPauser: string,
   accounts: Truffle.Accounts
 ): void {
   describe("GasAbstraction", () => {
@@ -17,7 +17,7 @@ export function hasGasAbstraction(
       getFiatToken,
       getDomainSeparator,
       fiatTokenOwner,
-      roleOwnerBlacklisterPauser,
+      rolesAdminBlacklisterPauser,
       accounts,
     };
 

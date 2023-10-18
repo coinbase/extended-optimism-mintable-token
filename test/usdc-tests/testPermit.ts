@@ -19,7 +19,7 @@ export function testPermit({
   getFiatToken,
   getDomainSeparator,
   fiatTokenOwner,
-  roleOwnerBlacklisterPauser,
+  rolesAdminBlacklisterPauser,
   accounts,
 }: TestParams): void {
   describe("permit", () => {
@@ -369,7 +369,7 @@ export function testPermit({
       );
     });
 
-    it("reverts if the owner or the spender is blacklisted", async () => {
+    it("reverts if the owner, the spender or the sender is blacklisted", async () => {
         const { owner, spender, value, nonce, deadline } = permitParams;
         // create a signed permit
         const { v, r, s } = signPermit(
@@ -383,7 +383,7 @@ export function testPermit({
         );
   
         // owner is blacklisted
-        await fiatToken.blacklist(owner, { from: roleOwnerBlacklisterPauser });
+        await fiatToken.blacklist(owner, { from: rolesAdminBlacklisterPauser });
   
         const submitTx = () =>
           fiatToken.permit(owner, spender, value, deadline, v, r, s, {
@@ -394,11 +394,18 @@ export function testPermit({
         await expectRevert(submitTx(), "account is blacklisted");
   
         // spender is blacklisted
-        await fiatToken.unBlacklist(owner, { from: roleOwnerBlacklisterPauser });
-        await fiatToken.blacklist(spender, { from: roleOwnerBlacklisterPauser });
+        await fiatToken.unBlacklist(owner, { from: rolesAdminBlacklisterPauser });
+        await fiatToken.blacklist(spender, { from: rolesAdminBlacklisterPauser });
   
         // try to submit the permit
         await expectRevert(submitTx(), "account is blacklisted");
+
+        // sender is blacklisted
+        await fiatToken.unBlacklist(spender, { from: rolesAdminBlacklisterPauser });
+        await fiatToken.blacklist(charlie, { from: rolesAdminBlacklisterPauser });
+
+        // try to submit the permit
+        await expectRevert(submitTx(), "account is blacklisted");        
       });
 
       it("reverts if the contract is paused", async () => {
@@ -415,7 +422,7 @@ export function testPermit({
         );
   
         // pause the contract
-        await fiatToken.pause({ from: roleOwnerBlacklisterPauser });
+        await fiatToken.pause({ from: rolesAdminBlacklisterPauser });
   
         // try to submit the permit
         await expectRevert(
