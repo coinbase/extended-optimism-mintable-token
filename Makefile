@@ -39,8 +39,8 @@ coverage:
 
 .PHONY: deploy
 deploy:
-	@forge script --sender $(DEPLOYER) -- broadcast --rpc-url $(RPC_URL) --sig "run()" DeployExtendedOptimismMintableToken
+	@forge script --sender $(DEPLOYER) --broadcast --rpc-url $(L2_RPC_URL) DeployExtendedOptimismMintableToken
 
 .PHONY: deploy-local
 deploy-local:
-	forge script --sender $(DEPLOYER) --sig "run()" DeployExtendedOptimismMintableToken
+	forge script --sender $(DEPLOYER) DeployExtendedOptimismMintableToken
